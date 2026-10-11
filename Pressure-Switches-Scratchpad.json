@@ -1,0 +1,45 @@
+{
+  "format": "truckfixhub-parts-v1",
+  "parts": [
+    {
+      "number": "FSC 1749-2312",
+      "description": "Oil pressure switch \u2014 N.O., 64\u201376 PSI",
+      "notes": "Two threaded terminals. Transcribed from supplied switch reference sheet."
+    },
+    {
+      "number": "FSC 1745-1745",
+      "description": "Oil pressure switch \u2014 N.O., 5\u20139 PSI",
+      "notes": "Single blade terminal. Transcribed from supplied switch reference sheet."
+    },
+    {
+      "number": "FSC 1745-2313",
+      "description": "Oil pressure switch \u2014 N.O., 64\u201376 PSI",
+      "notes": "Single threaded terminal. Transcribed from supplied switch reference sheet."
+    },
+    {
+      "number": "FSC 1749-1907",
+      "description": "Low air pressure switch \u2014 N.O.",
+      "notes": "Dual blade terminals; red stripe. Pressure setting is not listed on the supplied sheet."
+    },
+    {
+      "number": "FSC 1749-1121",
+      "description": "Oil pressure switch \u2014 N.O., 2\u20136 PSI",
+      "notes": "Dual blade terminals; short black body. Handwritten note: CRUISE."
+    },
+    {
+      "number": "FSC 2749-2108",
+      "description": "Air pressure switch \u2014 N.C., 70 PSI",
+      "notes": "Dual blade terminals; tall black body. Handwritten note: Park Brake. Sheet prints 2749-2108; number preserved as shown."
+    },
+    {
+      "number": "FSC 1749-2134",
+      "description": "Air pressure switch \u2014 N.C., 2\u20136 PSI",
+      "notes": "Blade terminal; short black body. Terminal count is not specified on sheet."
+    },
+    {
+      "number": "D12-15071",
+      "description": "Reference drawing \u2014 Freightliner air-manifold switch installation",
+      "notes": "Daimler Trucks North America drawing: INSTL-SWITCHES, AIR PRESS., CC. Drawing reference, not an orderable part number.\nDetail A: 21-port manifold, with blend-air system, FLX LHX.\nDetail B: 21-port manifold, without blend-air system, FLX LHX and FLH.\nDetail C: 22-port manifold, without blend-air system, FLX S-T and Coronado.\nDetail D: 22-port manifold, without blend-air system, Columbia FLH Argosy.\nDetail E: 22-port manifold, with blend-air system, FLX LHX.\nLabels include stop-light switch, primary and secondary low-air-pressure warning switches, cruise-control/service-brake switch, parking-brake warning, parking-brake cutout, and ECA auto-neutral. Locations vary by manifold configuration. Small part-number callouts are not transcribed because this photo is not clear enough. Original photo: IMG_9707.jpeg."
+    }
+  ]
+}
