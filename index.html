@@ -211,6 +211,20 @@ body.video-only .avatar-stage:after{background:linear-gradient(transparent,rgba(
 body.video-only .avatar-stage video{mix-blend-mode:normal!important;background:transparent!important;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))!important}
 @media(max-width:600px){body.video-only .avatar-stage{background-position:center 45%!important}}
 </style>
+
+<style id="tfh-intro-black-first">
+/* Login -> introduction: make the video the entire first experience. */
+body.video-only #book-page-2,
+body.video-only #welcome-video,
+body.video-only .avatar-stage{background:#000!important;}
+body.video-only .avatar-stage{padding:0!important;align-items:center!important;justify-content:center!important;}
+body.video-only .avatar-stage::before,
+body.video-only .avatar-stage::after{display:none!important;content:none!important;}
+body.video-only #welcome-video{width:100%!important;max-width:none!important;height:100dvh!important;border:0!important;box-shadow:none!important;}
+body.video-only #heygen-welcome-video{width:100%!important;height:100dvh!important;max-height:100dvh!important;object-fit:contain!important;object-position:center center!important;background:#000!important;mix-blend-mode:normal!important;border:0!important;border-radius:0!important;}
+body.video-only #book-page-2>.panel{display:none!important;}
+body.video-only #skip-intro{display:block!important;position:fixed!important;top:calc(env(safe-area-inset-top) + 12px)!important;right:12px!important;left:auto!important;bottom:auto!important;z-index:100000!important;background:#fff4d6!important;color:#2b241c!important;border:2px solid #b78336!important;font-weight:800!important;box-shadow:0 4px 18px #000a!important;}
+</style>
 </head>
 <body>
 <header><div class="wrap bar"><a class="brand" href="/">TruckFix<span>Hub</span></a><nav id="member-nav" aria-label="Main navigation"><button class="btn secondary" id="account">Log In</button><button class="btn" id="create-account" hidden>Create Account</button></nav><button id="header-rooms" class="btn secondary" type="button" hidden>Rooms</button></div></header>
