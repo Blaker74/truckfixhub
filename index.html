@@ -428,7 +428,7 @@ function route() {
  if(index===6){renderTrucks();loadPrivateList('trucks');}
  if(index===8){renderCustomers();loadCustomers();}
  if(index===7){renderWallet();loadWallet();}
- $('home-view').hidden=index!==0;$('welcome-video').hidden=index!==1;$('documented-guide').hidden=index!==2;
+ $('home-view').hidden=index!==0;
  $('community').hidden=index!==2;$('thread-view').hidden=!(index===4&&validId);$('discussion-empty').hidden=!!validId;
  if(index===4&&validId){
   lastDiscussionId=id;
@@ -1105,14 +1105,18 @@ window.tfhActions=Object.freeze({navigateBook,roadPause,stopLoungeTV});
  if(!playBtn)return;
  const message=`Welcome to Truck Fix Hub! I’m Blake Pierce, founder of this community. We’re here to connect truck drivers, mechanics, and parts professionals—people helping people keep our country moving. Swipe left to explore the site. Create an account to join the conversation, ask questions, and share what you know. Got a truck problem? Tell us what’s happening. Add photos or a short video to help the community understand the issue. Browse the shop directory, read our columns, and join the discussions. Your experience might be exactly what someone else needs. Welcome aboard. Let’s keep each other rolling!`;
  let speaking=false;
+ // Warm the voice list before a user starts playback; Safari loads it asynchronously.
+ if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.addEventListener('voiceschanged',()=>speechSynthesis.getVoices());}
  function stop(){ if('speechSynthesis' in window) speechSynthesis.cancel(); speaking=false; if(label)label.textContent='PLAY INTRODUCTION'; }
  function speak(){
    if(!('speechSynthesis' in window)){alert(message);return;}
    if(speaking){stop();return;}
    speechSynthesis.cancel();
-   const u=new SpeechSynthesisUtterance(message); u.rate=.96; u.pitch=.92; u.volume=1;
+   const u=new SpeechSynthesisUtterance(message); u.rate=.94; u.pitch=1; u.volume=1;
    const voices=speechSynthesis.getVoices();
-   const preferred=voices.find(v=>/en-US/i.test(v.lang)&&/male|daniel|aaron|fred|reed|rocko|eddy/i.test(v.name)) || voices.find(v=>/en-US/i.test(v.lang)) || voices[0];
+   const english=voices.filter(v=>/^en[-_]/i.test(v.lang));
+   function voiceScore(v){let score=/^en[-_]US$/i.test(v.lang)?20:0;if(/premium|enhanced|natural|neural|online/i.test(v.name))score+=100;if(/aaron|evan|nathan|tom|guy|andrew|brian/i.test(v.name))score+=35;if(/samantha|ava|allison|jenny|aria/i.test(v.name))score+=25;if(/fred|rocko|eddy|grandpa|whisper|trinoids|zarvox|bells|bad news|good news/i.test(v.name))score-=200;return score;}
+   const preferred=english.sort((a,b)=>voiceScore(b)-voiceScore(a))[0] || voices[0];
    if(preferred)u.voice=preferred;
    u.onstart=()=>{speaking=true;if(label)label.textContent='STOP INTRODUCTION';};
    u.onend=()=>{speaking=false;if(label)label.textContent='PLAY AGAIN';};
@@ -1215,7 +1219,7 @@ window.tfhActions=Object.freeze({navigateBook,roadPause,stopLoungeTV});
  document.getElementById('fuel-pump').onclick=()=>{if(!fuelDialog.open)fuelDialog.showModal();};document.getElementById('fuel-directory-close').onclick=()=>fuelDialog.close();
  document.getElementById('fuel-search-form').onsubmit=e=>{e.preventDefault();const location=document.getElementById('fuel-location').value.trim();if(!location)return;const query=document.getElementById('fuel-service').value+' near '+location;const a=document.createElement('a');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);a.target='_blank';a.rel='noopener noreferrer';a.click();};
  document.getElementById('chat-browse').onclick=()=>{location.href='?view=forum';};
- document.getElementById('chat-start').onclick=()=>document.querySelector('.compose.ask').click();
+ document.getElementById('chat-start').onclick=()=>document.querySelector('.tfh-whats-new.ask').click();
  document.getElementById('chat-return').onclick=()=>{if(!chatDialog.open)chatDialog.showModal();};
  document.getElementById('chat-terminal-close').onclick=()=>chatDialog.close();
  function syncChat(index){if(index!==4){if(chatDialog.open)chatDialog.close();return;}const params=new URLSearchParams(location.search);if(params.get('discussion')&&!chatDialog.open)chatDialog.showModal();}
