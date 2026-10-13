@@ -242,6 +242,33 @@ body.video-only #book-page-2{height:auto!important;min-height:0!important;paddin
 #book-page-2 #skip-intro{margin:0 auto!important;}
 @media(max-width:768px){#book-page-2 #welcome-video.avatar-stage{max-width:100%!important;aspect-ratio:16/9!important;}}
 </style>
+
+<style id="heygen-full-frame-fix">
+/* Keep the complete HeyGen composition visible on phones/tablets. */
+#book-page-2 #welcome-video.avatar-stage{
+  position:relative!important;
+  width:100%!important;
+  max-width:900px!important;
+  height:min(82dvh,900px)!important;
+  min-height:520px!important;
+  aspect-ratio:auto!important;
+  margin:0 auto!important;
+  overflow:hidden!important;
+  background:#080d12!important;
+}
+#book-page-2 #welcome-video iframe#heygen-welcome-video{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+  display:block!important;
+}
+body.video-only #heygen-welcome-video{height:100%!important;max-height:none!important;}
+@media(max-width:768px){
+ #book-page-2 #welcome-video.avatar-stage{height:76dvh!important;min-height:560px!important;max-width:100%!important;}
+}
+</style>
 </head>
 <body>
 <header><div class="wrap bar"><a class="brand" href="/">TruckFix<span>Hub</span></a><nav id="member-nav" aria-label="Main navigation"><button class="btn secondary" id="account">Log In</button><button class="btn" id="create-account" hidden>Create Account</button></nav><button id="header-rooms" class="btn secondary" type="button" hidden>Rooms</button></div></header>
