@@ -147,6 +147,12 @@ header .bar{gap:10px;align-items:center}header #member-nav{margin-left:auto;flex
 .directory-help{position:relative;z-index:1;max-width:860px;margin:18px auto 0;background:#f4e7ca;border:3px solid #8d6937;border-radius:10px;padding:13px;text-align:center;color:#2b2924;box-shadow:0 6px 15px #0007}
 body.video-only #book-page-2{background:linear-gradient(#20282d 0 20%,#48555a 20% 22%,#30383c 22% 72%,#4c4034 72%)!important}.avatar-stage{background:linear-gradient(90deg,#20282d,#37464c 50%,#20282d)!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;padding-top:70px!important}.avatar-stage:before{content:"TRUCKFIXHUB · WELCOME DESK";position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:2;background:#f0dfb6;color:#23382f;border:4px solid #896738;border-radius:6px;padding:9px 15px;font-weight:900;letter-spacing:1px;white-space:nowrap;box-shadow:0 5px 14px #0008}.avatar-stage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:25%;background:linear-gradient(#57493b,#2d2823);z-index:0;border-top:8px solid #1d1b19}.avatar-stage video{position:relative!important;z-index:1!important;width:min(100%,720px)!important;height:auto!important;max-height:82%!important;object-fit:contain!important;object-position:center bottom!important;background:transparent!important;mix-blend-mode:screen}
 @media(max-width:600px){.room-directory-grid{gap:9px}.tfh-destination{min-height:132px;padding:10px 7px}.tfh-destination strong{font-size:14px}.tfh-destination small{font-size:10px}.dest-icon{font-size:24px}.room-directory-sign{padding:11px}.room-directory-sign p{font-size:13px}.avatar-stage video{max-height:78%!important}}
+</style><style id="room-picker-mobile-fix">
+/* Keep the room directory fully usable on phones: the book footer must not cover destinations. */
+body.room-picker-active .book-footer{display:none!important}
+body.room-picker-active #book-page-17{padding-bottom:calc(110px + env(safe-area-inset-bottom));overflow-y:auto!important;-webkit-overflow-scrolling:touch}
+body.room-picker-active #book{min-height:0}
+@media(max-width:700px){body.room-picker-active #book-page-17{padding-left:14px;padding-right:14px;padding-bottom:calc(140px + env(safe-area-inset-bottom))}}
 </style></head>
 <body>
 <header><div class="wrap bar"><a class="brand" href="/">TruckFix<span>Hub</span></a><nav id="member-nav" aria-label="Main navigation"><button class="btn secondary" id="account">Log In</button><button class="btn" id="create-account" hidden>Create Account</button></nav><button id="header-rooms" class="btn secondary" type="button" hidden>Rooms</button></div></header>
@@ -254,6 +260,7 @@ function showBookPage(index){
  $('member-nav').hidden=index===0||index===1;
  document.body.classList.toggle('video-only',index===1);
  document.body.classList.toggle('in-foyer',index===16);
+ document.body.classList.toggle('room-picker-active',index===16);
  document.body.classList.toggle('at-entry',index===0);
  document.body.classList.toggle('in-hallway',index===20);
  $('book-prev').disabled=index===0||recovery;
