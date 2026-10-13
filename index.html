@@ -182,6 +182,21 @@ body.room-picker-active #book-page-17{padding:0!important;overflow:visible!impor
 .room-directory-grid .tfh-destination:nth-child(7){grid-column:2}
 @media(max-width:700px){.room-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.room-directory-grid .tfh-destination:nth-child(7){grid-column:1 / -1;max-width:360px;width:100%;justify-self:center}}
 </style>
+
+<style id="tfh-room-visual-first-fix">
+/* Room-first mobile layout: show the actual room before its tools. */
+#book-page-5,#book-page-23,#book-page-27,#book-page-28{display:flex;flex-direction:column}
+#book-page-5[hidden],#book-page-23[hidden],#book-page-27[hidden],#book-page-28[hidden]{display:none!important}
+#book-page-5 .scene-heading,#book-page-23 .scene-heading,#book-page-27 .scene-heading,#book-page-28 .scene-heading{order:1}
+#book-page-5 .interactive-room,#book-page-23 .interactive-room,#book-page-27 .interactive-room,#book-page-28 .interactive-room{order:2}
+#book-page-5>.panel,#book-page-23>.panel,#book-page-27>.panel,#book-page-28>.panel{order:3;margin:10px 14px 14px!important;padding:10px!important;max-width:none!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#book-page-5>.panel h2,#book-page-23>.panel h2,#book-page-27>.panel h2,#book-page-28>.panel h2{display:none}
+#book-page-5>.panel .reading-choices,#book-page-23>.panel .reading-choices,#book-page-27>.panel .reading-choices,#book-page-28>.panel .reading-choices{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important;margin:0!important}
+#book-page-5>.panel .reading-choices>a,#book-page-5>.panel .reading-choices>button,#book-page-23>.panel .reading-choices>a,#book-page-23>.panel .reading-choices>button,#book-page-27>.panel .reading-choices>a,#book-page-27>.panel .reading-choices>button,#book-page-28>.panel .reading-choices>a,#book-page-28>.panel .reading-choices>button{min-height:54px!important;padding:9px 10px!important;border-radius:10px!important;margin:0!important;font-size:14px!important}
+#book-page-5>.panel .reading-choices span,#book-page-23>.panel .reading-choices span,#book-page-27>.panel .reading-choices span,#book-page-28>.panel .reading-choices span{display:none!important}
+#book-page-5>.tfh-map-return,#book-page-23>.tfh-map-return,#book-page-27>.tfh-map-return,#book-page-28>.tfh-map-return{order:4;padding:4px 14px 12px!important}
+@media(max-width:520px){#book-page-5>.panel .reading-choices,#book-page-23>.panel .reading-choices,#book-page-27>.panel .reading-choices,#book-page-28>.panel .reading-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 </head>
 <body>
 <header><div class="wrap bar"><a class="brand" href="/">TruckFix<span>Hub</span></a><nav id="member-nav" aria-label="Main navigation"><button class="btn secondary" id="account">Log In</button><button class="btn" id="create-account" hidden>Create Account</button></nav><button id="header-rooms" class="btn secondary" type="button" hidden>Rooms</button></div></header>
@@ -293,7 +308,7 @@ function showBookPage(index){
  document.body.classList.toggle('at-entry',index===0);
  document.body.classList.toggle('in-hallway',index===20);
  $('book-prev').disabled=index===0||recovery;
- $('book-prev').textContent=index===20?'← Main Foyer':index>1&&index!==16?'← Hallway':'← Back';
+ $('book-prev').textContent=index===20?'← Main Foyer':index>1&&index!==16?'← Room Directory':'← Back';
  $('book-next').hidden=index>1;
  $('book-next').disabled=recovery||(index===0&&!user);
  $('book-next').textContent=index===0?'Meet Blake →':'Choose a Room →';
