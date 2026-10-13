@@ -1004,13 +1004,15 @@ window.tfhActions=Object.freeze({navigateBook,roadPause,stopLoungeTV});
  audio.volume=.18;
  let enabled=true;
  try{enabled=localStorage.getItem('tfh.backgroundMusic')!=='off';}catch(e){}
- function paint(){toggle.textContent=enabled?'🎷 Music on':'🔇 Music off';toggle.setAttribute('aria-pressed',String(enabled));toggle.setAttribute('aria-label',enabled?'Turn background music off':'Turn background music on');}
- function start(){if(!enabled)return;audio.play().catch(()=>{});}
+ function paint(){toggle.textContent=enabled&&!audio.paused?'🎷 Jazz playing':(enabled?'🎷 Play Jazz':'🔇 Jazz off');toggle.setAttribute('aria-pressed',String(enabled));toggle.setAttribute('aria-label',enabled?'Play or pause background jazz':'Turn background jazz on');}
+ function start(){if(!enabled)return;audio.play().then(paint).catch(()=>{paint();});}
  function setEnabled(next){enabled=next;try{localStorage.setItem('tfh.backgroundMusic',enabled?'on':'off');}catch(e){}paint();if(enabled)start();else audio.pause();}
  toggle.hidden=false;paint();
- toggle.addEventListener('click',()=>setEnabled(!enabled));
+ toggle.addEventListener('click',()=>{if(enabled&&!audio.paused){audio.pause();paint();return;}if(!enabled)enabled=true;try{localStorage.setItem('tfh.backgroundMusic','on');}catch(e){}paint();start();});
  // iPhone/Safari requires a user gesture before audible media can begin.
  ['pointerdown','touchend','keydown'].forEach(type=>document.addEventListener(type,start,{once:true,passive:true}));
+ document.addEventListener('click',e=>{const hit=e.target.closest('a,button');if(hit&&enabled)start();},true);
+ audio.addEventListener('play',paint);audio.addEventListener('pause',paint);audio.addEventListener('error',()=>{toggle.textContent='⚠️ Jazz unavailable';});
  window.addEventListener('tfh-book-page',()=>start());
 })();
 </script><script>
