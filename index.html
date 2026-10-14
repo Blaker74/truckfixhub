@@ -422,8 +422,8 @@ if(!window.tfhLogoEntry){splash.remove();return;}
 splash.hidden=false;
 const start=document.getElementById('tfh-start-engine'),stage=document.getElementById('tfh-engine-stage'),canvas=document.getElementById('tfh-engine-smoke'),status=document.getElementById('tfh-engine-status');
 const content=[],reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let running=false,leaving=false,frame=0,timer=0,audioContext=null,source=null,master=null;
-function stop(){cancelAnimationFrame(frame);clearTimeout(timer);if(source){try{source.stop();}catch(e){}source=null;}if(audioContext){audioContext.close().catch(()=>{});audioContext=null;}}
+let running=false,leaving=false,frame=0,timer=0,countdownTimer=0,audioContext=null,source=null,master=null;
+function stop(){cancelAnimationFrame(frame);clearTimeout(timer);clearInterval(countdownTimer);if(source){try{source.stop();}catch(e){}source=null;}if(audioContext){audioContext.close().catch(()=>{});audioContext=null;}}
 function leave(){
  if(leaving)return;leaving=true;stop();splash.classList.add('tfh-fading');
  setTimeout(()=>{
@@ -479,7 +479,10 @@ function smoke(){
  frame=requestAnimationFrame(draw);
 }
 start.addEventListener('click',()=>{
- if(running||leaving)return;running=true;start.disabled=true;start.textContent='Engine Running';status.textContent='Entering TruckFixHub in 20 seconds…';playDiesel();
+ if(running||leaving)return;running=true;start.disabled=true;start.textContent='Engine Running';status.textContent='Opening rooms in 20 seconds…';
+ const countdownDeadline=performance.now()+20000;
+ countdownTimer=setInterval(()=>{const remaining=Math.max(0,Math.ceil((countdownDeadline-performance.now())/1000));status.textContent=remaining>0?'Opening rooms in '+remaining+' '+(remaining===1?'second':'seconds')+'…':'Opening rooms…';},250);
+ playDiesel();
  if(!reduced){stage.classList.add('tfh-engine-running');smoke();}
  timer=setTimeout(leave,20000);
 });
