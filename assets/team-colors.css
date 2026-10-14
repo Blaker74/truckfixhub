@@ -1,0 +1,72 @@
+/* Cowboys-inspired colors, with TruckFixHub's own artwork and identity. */
+[hidden]{display:none!important}
+:root{
+ --navy:#041e42;
+ --royal:#003594;
+ --silver:#869397;
+ --silver-light:#dce1e6;
+ --white:#fff;
+ --ink:var(--navy);
+ --muted:#526176;
+ --blue:var(--royal);
+ --line:#c5ced8;
+ --bg:#f2f4f7;
+}
+header,body>header{background:var(--navy);border-bottom:3px solid var(--silver);color:var(--white)}
+.header-label,.header-shop,.hub-existing{color:var(--silver-light)}
+header button{background:var(--royal);border-color:var(--silver);color:var(--white)}
+.brand span,body>header .brand span{color:var(--white)}
+.welcome{background:linear-gradient(125deg,var(--navy),var(--royal));border-color:var(--silver)}
+.welcome .eyebrow,.welcome p{color:var(--silver-light)}
+.welcome h1,.welcome h2{color:var(--white)}
+.eyebrow{color:#526176}
+.sidebar nav a{color:#526176}
+.sidebar nav .selected{background:var(--navy);color:var(--white)}
+.mission{color:var(--navy)}
+.avatar{background:var(--silver-light);color:var(--navy)}
+.composer-row button{background:#f2f4f7;color:#526176}
+.next-generation{background:var(--silver-light);border-color:var(--silver);border-left:4px solid var(--royal)}
+.next-generation h2{color:var(--navy)}
+.stream-tabs{background:var(--silver-light)}
+.stream-tabs button{color:#526176}
+.stream-tabs button[aria-pressed=true]{background:var(--royal);color:var(--white)}
+.post-topic{background:var(--silver-light);color:var(--navy)}
+.post-actions button[aria-pressed=true]{background:var(--royal);color:var(--white)}
+.reply-form button,.primary{background:var(--royal);border-color:var(--royal);color:var(--white)}
+.career-cta{background:var(--white);color:var(--royal)}
+.mobile-nav{background:var(--navy);border-top:2px solid var(--silver)}
+.mobile-nav a{color:var(--silver-light)}
+.mobile-nav a[aria-current=page]{background:var(--royal);color:var(--white)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline-color:var(--royal)}
+header :focus-visible,.welcome :focus-visible,.mobile-nav :focus-visible{outline-color:var(--white)}
+
+/* The dashboard has a navy canvas and silver accents. */
+body.room-picker-active{background:var(--navy)}
+body.room-picker-active #book-page-17{background:var(--navy)!important}
+#book-page-17 .hub-shell,#book-page-17 h1,#book-page-17 .hub-tools h2,
+#book-page-17 .hub-tool-card h3,.hub-quick-grid strong{color:var(--white)}
+#book-page-17 h1 span{color:var(--silver-light)}
+.hub-kicker,#book-page-17 .hub-intro p,.hub-private-hint,.hub-results,
+.hub-quick-grid small,.hub-tool-card p,.hub-tool-badge,.hub-signoff,
+.hub-sponsor p,.hub-next p,.hub-logo .brand-fallback{color:var(--silver-light)}
+.hub-kicker i{background:var(--silver);box-shadow:0 0 12px #86939760}
+.hub-community{background:linear-gradient(130deg,var(--royal),var(--navy));border-color:var(--silver);color:var(--white)}
+.hub-community:after{border-color:#86939740}
+.hub-feature-label,.hub-feature p{color:var(--silver-light)}
+.hub-quick-grid a,.hub-tool-card,.hub-search-wrap,.hub-next{background:#082951;border-color:#526985}
+.hub-quick-grid a:hover,.hub-tool-card:hover{background:var(--royal);border-color:var(--silver-light)}
+.hub-quick-grid a>span,.hub-tool-open,.hub-next a{color:var(--white)}
+.hub-search-wrap>span,.hub-search-wrap kbd{color:var(--silver-light)}
+#hub-search{color:var(--white)}
+#hub-search::placeholder{color:var(--silver-light)}
+.hub-categories button{background:var(--navy);color:var(--silver-light);border-color:var(--silver)}
+.hub-categories button[aria-pressed=true]{background:var(--silver-light);color:var(--navy);border-color:var(--silver-light)}
+.hub-favorite{color:var(--silver-light)}
+.hub-favorite[aria-pressed=true]{background:var(--royal);color:var(--white)}
+.hub-favorite:hover{background:var(--royal)}
+.hub-sponsor{border-color:var(--silver)}
+.hub-sponsor a{background:var(--silver-light);color:var(--navy)}
+#hub-dock{background:var(--navy);border-top:2px solid var(--silver)}
+#hub-dock a{color:var(--silver-light)}
+#hub-dock a[aria-current=page],#hub-dock a:hover{background:var(--royal);color:var(--white)}
+#book-page-17 :focus-visible,#hub-dock :focus-visible{outline-color:var(--white)!important}

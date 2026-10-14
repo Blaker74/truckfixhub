@@ -40,3 +40,7 @@ Not yet verified: visual layout in a browser; iPhone Safari; real member signup/
 3. Expand short-video discovery, accessible captions, and a verified mentor/opportunity workflow.
 4. Add consent-based email notifications with server-side Resend configuration. Voice/video services need scoped features and account setup before use.
 5. Optimize the legacy homepage assets and plan the entry-point transition without breaking existing tools.
+
+## Color direction
+
+The community, dashboard, and future technician review pages share a Cowboys-inspired palette: navy (#041e42), royal blue (#003594), silver (#869397), pale silver (#dce1e6), and white. TruckFixHub retains its own logo and the existing Fourthwall shop. The shared theme is assets/team-colors.css; it does not apply team logos or change the external store design.
