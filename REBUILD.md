@@ -1,19 +1,42 @@
-# TruckFixHub rebuild
+# TruckFixHub community rebuild
 
-## Dashboard preview
+## Review entry points
 
-`dashboard.html` is a separate design and navigation preview. It links into the existing application in `index.html`; it does not replace the homepage or change authentication, database records, media storage, or private tools.
+- `dashboard.html`: searchable directory of 26 existing tools, community entry, technician pathway, and the existing Fourthwall gear shop. Favorites store tool URLs on the visitor's device.
+- `community.html`: a Supabase-backed social feed with All posts, Photos, and Videos views; sign-in; text/media posting; replies; likes; shared post links; and reports. Videos use native controls without autoplay. New posts require manual refresh; no realtime subscription is claimed.
+- `technicians.html`: a starting point for future truck technicians and experienced people willing to share what they know. It does not claim to have verified jobs, apprenticeships, mentors, or placement services.
 
-The preview includes 26 tool links, search, road/work/off-duty categories, favorites stored on the visitor's device, and persistent navigation. Private labels describe tools that already require authentication; labels are not an access-control mechanism. Favorites contain tool URLs only and do not sync across devices.
+The existing homepage remains unchanged. These pages are review entry points before a homepage transition, preserving the current tools and account flows. Text conversations are public under the existing database policies; attachments require sign-in. No fake members, posts, activity counts, or endorsements are used.
 
-Validation completed: JavaScript syntax; DOM startup; all 26 cards; search; category counts; favorite add/remove/persistence; empty states; unique element IDs; and local link destinations. Visual browser testing, iPhone testing, and authenticated database tests remain outstanding.
+## Brand and store
 
-## Next milestones
+Keep the existing TruckFixHub truck logo and `https://truckfixhub-gear-shop.fourthwall.com/`. `assets/brand.mjs` reuses the original embedded artwork directly from the existing homepage, keeping a readable wordmark if loading fails. It stops reading once it finds the logo. The legacy homepage is large, so this is a temporary compatibility measure; a separately hosted original logo remains a performance improvement for a later change. No replacement artwork is introduced.
 
-1. Review the dashboard on iPhone and desktop, including keyboard navigation and larger text sizes. Confirm the preferred entry experience before changing the homepage.
-2. Audit community uploads end to end: signed-in upload, storage permissions, post creation, refresh, another device, error recovery, reporting, and deletion. Inspect database policies before claiming private records are secure.
-3. Verify profile and community behavior, then design a distinctive short-video experience around reliable uploads and moderation.
-4. Improve repair-resource and shop-directory discovery, with clear distinctions between paid placements and recommendations.
-5. Reduce startup weight and separate the existing application's repeated styles, embedded media, and large scripts. The attempted media extraction is excluded from this branch because the automatic approval check rejected the binary uploads.
+## Community implementation
 
-Prioritize working features, understandable navigation, and repeat use. Growth and sponsorship depend on an audience that finds the site useful enough to return.
+Uses the existing public Supabase publishable key and schema. No service-role or private integration keys are included. No schema migrations or member data changes were made during development. The browser uses existing database policies to authorize operations; UI labels do not provide security.
+
+The composer retains stable post and attachment IDs and selected files during retries. Confirmed text posts stay saved if an attachment fails. Metadata is checked before retrying; uncertain metadata responses do not trigger deletion of potentially committed files. The editor can be cleared explicitly; selected files are held in memory, so reloading the page loses unsaved selections. A refresh warning is provided. File limits: four attachments per new post, images up to 10 MB, videos up to 50 MB, using the existing allowed types.
+
+Public posts and replies render as plain text. Signed attachment links expire after 15 minutes; refresh the feed to renew them. Replies show up to the first 100 per post. The current page supports text replies; existing reply attachments remain in the legacy community. Account creation and password reset continue through the existing account page. Author names are member-supplied and do not verify professional credentials.
+
+## Validation
+
+Passed:
+
+- JavaScript syntax checks for all new scripts.
+- `node --test tests/community-data.test.mjs`: 11 tests for limits, payloads, deterministic uploads, failed requests, duplicate retries, metadata reconciliation, orphan cleanup, and account switching.
+- DOM startup/interaction checks with mock API responses: safe text rendering, signed-out feed, media sign-in gate, signed-in photo filtering, existing like state, unlike, and reply submission.
+- Dashboard DOM checks: 26 cards, search, category filters, local favorites, empty states, IDs, private labels, and local destinations.
+- Local HTML IDs and links across all three pages.
+- Read-only live public posts query returned HTTP 200. The anonymous media join returned HTTP 401, consistent with sign-in-only media access. The actual like-summary RPC signature was checked.
+
+Not yet verified: visual layout in a browser; iPhone Safari; real member signup/sign-in; authenticated photo/video upload and refresh; separate-account access; email delivery; moderation/deletion flows. Mock tests do not establish end-to-end success or comprehensive security. Complete these before promoting the review community to the homepage.
+
+## Next releases
+
+1. Complete browser and two-account acceptance checks and fix observed failures.
+2. Add member profiles and role labels, following, moderation tools, and in-app notifications backed by explicit permissions.
+3. Expand short-video discovery, accessible captions, and a verified mentor/opportunity workflow.
+4. Add consent-based email notifications with server-side Resend configuration. Voice/video services need scoped features and account setup before use.
+5. Optimize the legacy homepage assets and plan the entry-point transition without breaking existing tools.

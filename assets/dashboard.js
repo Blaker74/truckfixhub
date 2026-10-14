@@ -19,7 +19,7 @@ const tfhAppPages=[
 // Dashboard directory: local favorites store tool IDs only, never account data.
 const hubWorkViews=new Set(['call-notes','my-contacts','parts','trucks','customers','wallet','sales-flyers','personal-documents','quick-links']);
 const hubRoadViews=new Set(['garage','shops','fuel-islands','restaurant','flashlight']);
-const hubTools=[{icon:'◎',title:'Community',description:'Posts, photos, videos & real trucking conversations',url:'?view=forum',category:'road',private:false},
+const hubTools=[{icon:'◎',title:'Community',description:'Posts, photos, videos & real trucking conversations',url:'community.html',category:'road',private:false},
  ...tfhAppPages.flatMap(group=>group.apps.map(([icon,title,description,url])=>{const view=new URLSearchParams(url.split('?')[1]||'').get('view');return {icon,title,description,url,category:hubWorkViews.has(view)||view==='calendar'?'work':hubRoadViews.has(view)||view==='supermiller'?'road':'break',private:hubWorkViews.has(view)};})),
  {icon:'↔',title:'Trip Fuel Calculator',description:'Estimate fuel gallons, total cost & cost per mile',url:'trip-fuel-cost-calculator.html',category:'road',private:false},
  {icon:'▤',title:'Repair Guides',description:'Emissions, electronics, Detroit & Cummins resources',url:'resources.html',category:'road',private:false}];
