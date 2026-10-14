@@ -1306,30 +1306,32 @@ shopSearch.addEventListener('input',()=>{const terms=shopSearch.value.toLowerCas
 window.tfhActions=Object.freeze({navigateBook,roadPause,stopLoungeTV});
 </script>
 
-<script>
+<script id="tfh-rooms-only-music">
 (() => {
  const audio=document.getElementById('tfh-background-music');
  const toggle=document.getElementById('truckstop-sound');
  if(!audio||!toggle)return;
  audio.volume=.18;
- let enabled=true;
+ let enabled=true,roomIndex=new URLSearchParams(location.search).get('view')==='rooms'?16:0,priming=false;
  try{enabled=localStorage.getItem('tfh.backgroundMusic')!=='off';}catch(e){}
- function paint(){toggle.textContent=enabled?'🎷 Music on':'🔇 Music off';toggle.setAttribute('aria-pressed',String(enabled));toggle.setAttribute('aria-label',enabled?'Turn background music off':'Turn background music on');}
- function start(){if(!enabled)return;audio.play().catch(()=>{});}
- function setEnabled(next){enabled=next;try{localStorage.setItem('tfh.backgroundMusic',enabled?'on':'off');}catch(e){}paint();if(enabled)start();else audio.pause();}
- toggle.hidden=false;paint();
+ function inRooms(){return roomIndex===16&&!document.getElementById('tfh-logo-splash')&&!document.hidden;}
+ function paint(){toggle.hidden=roomIndex!==16;toggle.textContent=enabled?'🎷 Music on':'🔇 Music off';toggle.setAttribute('aria-pressed',String(enabled));toggle.setAttribute('aria-label',enabled?'Turn background music off':'Turn background music on');}
+ function sync(){paint();if(enabled&&inRooms()&&!priming){audio.play().then(()=>{if(!enabled||!inRooms())audio.pause();}).catch(()=>{});}else audio.pause();}
+ function setEnabled(next){enabled=next;try{localStorage.setItem('tfh.backgroundMusic',enabled?'on':'off');}catch(e){}sync();}
  toggle.addEventListener('click',()=>setEnabled(!enabled));
- // iPhone/Safari requires a user gesture before audible media can begin.
- ['pointerdown','touchend','keydown'].forEach(type=>document.addEventListener(type,start,{once:true,passive:true}));
- window.addEventListener('tfh-book-page',()=>start());
- // Stop TruckFixHub music whenever the site is no longer visible.
- // Resume only when the visitor returns and music is still enabled.
- document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){audio.pause();}
-  else if(enabled){start();}
- });
+ // Unlock media silently on the engine tap; audible jazz starts only in the room directory.
+ function gesture(){
+  if(inRooms()){sync();return;}
+  if(!enabled||priming)return;
+  priming=true;audio.volume=0;
+  audio.play().then(()=>{audio.pause();audio.volume=.18;priming=false;sync();}).catch(()=>{audio.volume=.18;priming=false;});
+ }
+ ['pointerdown','touchend','keydown'].forEach(type=>document.addEventListener(type,gesture,{passive:true}));
+ window.addEventListener('tfh-book-page',e=>{roomIndex=e.detail;sync();});
+ document.addEventListener('visibilitychange',sync);
  window.addEventListener('pagehide',()=>audio.pause());
- window.addEventListener('pageshow',()=>{if(!document.hidden&&enabled)start();});
+ window.addEventListener('pageshow',sync);
+ sync();
 })();
 </script><script>
 (() => {
