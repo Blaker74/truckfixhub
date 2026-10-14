@@ -366,7 +366,7 @@ html.tfh-splash-open,html.tfh-splash-open body{overflow:hidden}
 @media(prefers-reduced-motion:reduce){#tfh-logo-splash{transition:none}#tfh-engine-stage.tfh-engine-running{animation:none}}
 </style>
 <script id="tfh-logo-entry-check">
-window.tfhLogoEntry=(()=>{const p=new URLSearchParams(location.search);return (!p.has('view')&&!p.has('discussion')&&!location.hash&&!p.has('code')&&!p.has('error'))||p.get('view')==='intro';})();
+window.tfhLogoEntry=(()=>{const p=new URLSearchParams(location.search);const clean=!p.has('discussion')&&!location.hash&&!p.has('code')&&!p.has('error');const v=p.get('view');return clean&&(!v||v==='intro'||v==='rooms');})();
 if(window.tfhLogoEntry){document.documentElement.classList.add('tfh-splash-open');if(new URLSearchParams(location.search).get('view')==='intro')history.replaceState(null,'','?view=rooms');}
 </script>
 
