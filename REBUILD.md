@@ -44,3 +44,7 @@ Not yet verified: visual layout in a browser; iPhone Safari; real member signup/
 ## Color direction
 
 The community, dashboard, and future technician review pages share a Cowboys-inspired palette: navy (#041e42), royal blue (#003594), silver (#869397), pale silver (#dce1e6), and white. TruckFixHub retains its own logo and the existing Fourthwall shop. The shared theme is assets/team-colors.css; it does not apply team logos or change the external store design.
+
+## Public search entry point
+
+Added `trucking-cost-per-mile-calculator.html` with an interactive monthly cost/break-even tool, visible formulas, worked example, self-canonical metadata, and WebPage structured data. Linked it from resources, the existing fuel tool, dashboard and community, and added the public URL to the sitemap. Four arithmetic tests and mock DOM result/error checks passed; canonical URLs, JSON-LD, HTML IDs/links and sitemap XML validated. See SEARCH.md for candidate search intents, deployment and Search Console steps. This is saved for review, not deployed or submitted to search engines.
