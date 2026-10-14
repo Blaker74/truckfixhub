@@ -10,7 +10,7 @@ The existing homepage remains unchanged. These pages are review entry points bef
 
 ## Brand and store
 
-Keep the existing TruckFixHub truck logo and `https://truckfixhub-gear-shop.fourthwall.com/`. `assets/brand.mjs` reuses the original embedded artwork directly from the existing homepage, keeping a readable wordmark if loading fails. It stops reading once it finds the logo. The legacy homepage is large, so this is a temporary compatibility measure; a separately hosted original logo remains a performance improvement for a later change. No replacement artwork is introduced.
+Keep the existing TruckFixHub truck logo and `https://truckfixhub-gear-shop.fourthwall.com/`. `assets/brand.mjs` reuses the original embedded artwork directly from the existing homepage, keeping a readable wordmark if loading fails. It stops reading once it finds the logo and caches the public artwork for the browser session when storage is available. The legacy homepage is large, so this is a temporary compatibility measure; a separately hosted original logo remains a performance improvement for a later change. No replacement artwork is introduced.
 
 ## Community implementation
 
