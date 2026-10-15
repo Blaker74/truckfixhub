@@ -1,4 +1,4 @@
-import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=page-turn1';
+import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=homepage1';
 import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
 const handbook = $('handbook'), splash = $('truck-entry'), start = $('start-engine'), stage = $('engine-stage'), canvas = $('engine-smoke'), status = $('engine-status');
@@ -130,7 +130,7 @@ function prepareFrame(iframe, view, label, line) {
     const link = event.target.closest('a[href]');
     if (!link || link.target === '_blank' || event.defaultPrevented) return;
     const url = new URL(link.href);
-    if (url.origin !== location.origin || !/\/index\.html$|\/$/.test(url.pathname)) return;
+    if (url.origin !== location.origin || !/\/(?:index|tools)\.html$|\/$/.test(url.pathname)) return;
     if (url.searchParams.get('view') === 'rooms') { event.preventDefault(); event.stopImmediatePropagation(); changePage('contents'); }
    }, true);
   }
@@ -144,9 +144,9 @@ function openTool(view, title, privacy, back) {
  music.block('call-notes', view === 'call-notes'); music.block('casino', view === 'casino');
  const line = node('div', undefined, 'tool-status'); line.append(node('span', 'Opening ' + title + '…'));
  if (back) { const button = node('button', '← Workday tools', 'tool-back'); button.type = 'button'; button.addEventListener('click', () => render()); line.append(button); }
- const full = node('a', 'Open full page ↗'); full.href = 'index.html?view=' + encodeURIComponent(view); full.target = '_blank'; full.rel = 'noopener'; line.append(full); body.append(line);
+ const full = node('a', 'Open full page ↗'); full.href = 'tools.html?view=' + encodeURIComponent(view); full.target = '_blank'; full.rel = 'noopener'; line.append(full); body.append(line);
  const iframe = node('iframe'); iframe.title = title + ' — interactive TruckFixHub chapter';
- iframe.src = 'index.html?view=' + encodeURIComponent(view);
+ iframe.src = 'tools.html?view=' + encodeURIComponent(view);
  iframe.addEventListener('load', () => { if (activeFrame === iframe) prepareFrame(iframe, view, privacy || title, line); });
  activeFrame = iframe; body.append(iframe);
  frameTimeout = setTimeout(() => { if (activeFrame === iframe) line.firstChild.textContent = 'Taking longer than usual. Try “Open full page.”'; }, 20000);
@@ -175,14 +175,14 @@ async function renderReels() {
  const body = $('chapter-body'); body.replaceChildren();
  const wrap = node('div', undefined, 'reel-page');
  // Fixed controls; visitor content is rendered safely by the existing community module.
- wrap.innerHTML = `<div class="reel-toolbar"><a class="primary-link" href="index.html?view=forum" target="_blank" rel="noopener">Share a truck video ↗</a><button id="community-refresh" type="button">Refresh</button></div><label for="community-search">Find a truck video in the latest 24 posts</label><input id="community-search" type="search" placeholder="Search videos…"><p id="community-status" role="status" aria-live="polite">Loading Diesel Reel…</p><p id="community-auth-note"><a href="index.html?view=account" target="_blank" rel="noopener">Sign in</a> to watch community videos.</p><div id="community-feed" class="reel-gallery"></div>`;
+ wrap.innerHTML = `<div class="reel-toolbar"><a class="primary-link" href="tools.html?view=forum" target="_blank" rel="noopener">Share a truck video ↗</a><button id="community-refresh" type="button">Refresh</button></div><label for="community-search">Find a truck video in the latest 24 posts</label><input id="community-search" type="search" placeholder="Search videos…"><p id="community-status" role="status" aria-live="polite">Loading Diesel Reel…</p><p id="community-auth-note"><a href="tools.html?view=account" target="_blank" rel="noopener">Sign in</a> to watch community videos.</p><div id="community-feed" class="reel-gallery"></div>`;
  body.append(wrap); const controller = new AbortController(); reelAbort = controller;
  const syncReelAudio = () => { if (reelAbort === controller) music.block('chapter-media', [...wrap.querySelectorAll('video')].some(video => !video.paused && !video.ended)); };
  ['play','playing','pause','ended'].forEach(type => wrap.addEventListener(type, event => {
   if (event.type === 'play') wrap.querySelectorAll('video').forEach(video => { if (video !== event.target) video.pause(); });
   syncReelAudio();
  }, true));
- try { const { startCommunity } = await import('./community.mjs?v=truckbook4'); if (!controller.signal.aborted) await startCommunity({ initialMode: 'clips', externalDiscussion: true, signal: controller.signal }); }
+ try { const { startCommunity } = await import('./community.mjs?v=homepage1'); if (!controller.signal.aborted) await startCommunity({ initialMode: 'clips', externalDiscussion: true, signal: controller.signal }); }
  catch { if (!controller.signal.aborted) $('community-status').textContent = 'Diesel Reel could not connect. Open the community to watch or share videos.'; }
 }
 function makeTurningPage(previous, next) {

@@ -14,7 +14,7 @@ export function filterPosts(posts, media, mode, query, saved) {
 
 export function discussionURL(id) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error('Invalid post identifier');
-  return new URL('index.html?discussion=' + encodeURIComponent(id), location.href).href;
+  return new URL('tools.html?discussion=' + encodeURIComponent(id), location.href).href;
 }
 
 function element(tag, text, className) {
