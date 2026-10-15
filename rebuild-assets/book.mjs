@@ -1,3 +1,4 @@
+import { installCallNoteDelete } from './call-note-delete.mjs';
 import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=final-order1';
 import { repairGuides, publicFiles, resourceDestination } from './road-resources.mjs?v=resources1';
 import { createBookMusic } from './book-music.mjs';
@@ -145,6 +146,7 @@ function prepareFrame(iframe, view, label, line) {
  try {
   const doc = iframe.contentDocument;
   if (!doc || new URL(iframe.contentWindow.location.href).origin !== location.origin) return;
+  installCallNoteDelete(doc);
   if (!doc.getElementById('handbook-embed-style')) {
    const style = doc.createElement('style'); style.id = 'handbook-embed-style';
    style.textContent = `html,body{height:100%!important;min-height:0!important}body{display:flex!important;flex-direction:column!important;overflow:hidden!important;font-size:20px!important}body>header,.book-footer,#member-nav,.tfh-chat-next,.tfh-social-top,.tfh-neon-control{display:none!important}#book{width:100%!important;max-width:none!important;flex:1!important;min-height:0!important;margin:0!important;border:0!important;border-radius:0!important}.book-page{padding:18px!important}.book-page h1{font-size:28px!important}.book-page h2{font-size:25px!important}.book-page h3{font-size:23px!important}.book-page p,.book-page label,.book-page input,.book-page textarea,.book-page select,.book-page button,.book-page .btn,.book-page summary,dialog p,dialog label,dialog input,dialog textarea,dialog button{font-size:19px!important;line-height:1.5!important}.book-page .small,.book-page .meta,.book-page small{font-size:16px!important}.book-page button,.book-page .btn,dialog button{min-height:48px!important}.tfh-feed-tools{margin-top:0!important}#community .tfh-composer{margin-top:0!important}a,button,input,textarea,select{touch-action:manipulation}.tfh-post-body{font-size:19px!important}`;
