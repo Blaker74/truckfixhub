@@ -105,8 +105,39 @@ function canLeaveChapter() {
 function changePage(hash) { if (canLeaveChapter()) location.hash = hash; }
 handbook.addEventListener('click', event => {
  const link = event.target.closest('a[href^="#"]');
+ if (link?.getAttribute('href') === '#account') { event.preventDefault(); openBookAccount(); return; }
  if (link && !canLeaveChapter()) event.preventDefault();
 });
+
+let accountDialog = null;
+function openBookAccount() {
+ if (!canLeaveChapter() || accountDialog) return;
+ const dialog = node('dialog', undefined, 'book-account-dialog');
+ dialog.setAttribute('aria-label', 'Your TruckFixHub account');
+ const bar = node('div', undefined, 'book-account-bar');
+ const heading = node('h2', 'My Account');
+ const close = node('button', 'Back to book'); close.type = 'button';
+ close.addEventListener('click', () => dialog.close());
+ bar.append(heading, close);
+ const note = node('p', 'Your call notes, VIN list, and customer list belong to your account. Community posts are shared with other users.', 'book-account-note');
+ const frame = node('iframe'); frame.title = 'Sign in or manage your private TruckFixHub account';
+ frame.src = 'tools.html?view=account';
+ frame.addEventListener('load', () => {
+  const doc = frame.contentDocument;
+  if (!doc) return;
+  const style = doc.createElement('style');
+  style.textContent = 'html,body{background:#fafbfd!important;min-height:0!important}body>header,#book,.book-footer,#music-dock,.tfh-neon-control{display:none!important}#auth-dialog{width:100%!important;max-width:620px!important;max-height:100%!important;margin:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important}#auth-dialog::backdrop{background:#fafbfd!important}#auth-dialog p,#auth-dialog label,#auth-dialog input,#auth-dialog button{font-size:19px!important;line-height:1.5!important}';
+  doc.head.append(style);
+  // Login, signup, and closing the account form all return to the still-open book.
+  doc.getElementById('auth-dialog')?.addEventListener('close', () => dialog.close(), { once: true });
+ });
+ dialog.append(bar, note, frame); document.body.append(dialog); accountDialog = dialog;
+ music.block('account', true);
+ dialog.addEventListener('close', () => { frame.src = 'about:blank'; dialog.remove(); accountDialog = null; music.block('account', false); $('book-account-open').focus({ preventScroll: true }); }, { once: true });
+ dialog.showModal();
+}
+$('book-account-open').addEventListener('click', openBookAccount);
+
 function prepareFrame(iframe, view, label, line) {
  try {
   const doc = iframe.contentDocument;
@@ -175,14 +206,14 @@ async function renderReels() {
  const body = $('chapter-body'); body.replaceChildren();
  const wrap = node('div', undefined, 'reel-page');
  // Fixed controls; visitor content is rendered safely by the existing community module.
- wrap.innerHTML = `<div class="reel-toolbar"><a class="primary-link" href="tools.html?view=forum" target="_blank" rel="noopener">Share a truck video ↗</a><button id="community-refresh" type="button">Refresh</button></div><label for="community-search">Find a truck video in the latest 24 posts</label><input id="community-search" type="search" placeholder="Search videos…"><p id="community-status" role="status" aria-live="polite">Loading Diesel Reel…</p><p id="community-auth-note"><a href="tools.html?view=account" target="_blank" rel="noopener">Sign in</a> to watch community videos.</p><div id="community-feed" class="reel-gallery"></div>`;
+ wrap.innerHTML = `<div class="reel-toolbar"><a class="primary-link" href="tools.html?view=forum" target="_blank" rel="noopener">Share a truck video ↗</a><button id="community-refresh" type="button">Refresh</button></div><label for="community-search">Find a truck video in the latest 24 posts</label><input id="community-search" type="search" placeholder="Search videos…"><p id="community-status" role="status" aria-live="polite">Loading Diesel Reel…</p><p id="community-auth-note"><a href="#account">Sign in</a> to watch community videos.</p><div id="community-feed" class="reel-gallery"></div>`;
  body.append(wrap); const controller = new AbortController(); reelAbort = controller;
  const syncReelAudio = () => { if (reelAbort === controller) music.block('chapter-media', [...wrap.querySelectorAll('video')].some(video => !video.paused && !video.ended)); };
  ['play','playing','pause','ended'].forEach(type => wrap.addEventListener(type, event => {
   if (event.type === 'play') wrap.querySelectorAll('video').forEach(video => { if (video !== event.target) video.pause(); });
   syncReelAudio();
  }, true));
- try { const { startCommunity } = await import('./community.mjs?v=homepage1'); if (!controller.signal.aborted) await startCommunity({ initialMode: 'clips', externalDiscussion: true, signal: controller.signal }); }
+ try { const { startCommunity } = await import('./community.mjs?v=account2'); if (!controller.signal.aborted) await startCommunity({ initialMode: 'clips', externalDiscussion: true, signal: controller.signal }); }
  catch { if (!controller.signal.aborted) $('community-status').textContent = 'Diesel Reel could not connect. Open the community to watch or share videos.'; }
 }
 function makeTurningPage(previous, next) {
@@ -267,5 +298,6 @@ $('turn-next').addEventListener('click', () => {
  if (current.kind === 'contents') changePage(chapters[0].id);
  else if (current.index < chapters.length - 1) changePage(chapters[current.index + 1].id);
 });
-window.addEventListener('hashchange', () => { if (!opened) enterBook(); else { render(); (current.kind === 'contents' ? $('contents-title') : $('chapter-title')).focus({ preventScroll: true }); } });
-if (location.hash) enterBook(); else start.focus({ preventScroll: true });
+window.addEventListener('hashchange', () => { if (['#account', '#login'].includes(location.hash)) { history.replaceState(null, '', '#contents'); if (!opened) enterBook(); openBookAccount(); return; } if (!opened) enterBook(); else { render(); (current.kind === 'contents' ? $('contents-title') : $('chapter-title')).focus({ preventScroll: true }); } });
+if (['#account', '#login'].includes(location.hash)) { history.replaceState(null, '', '#contents'); enterBook(); openBookAccount(); }
+else if (location.hash) enterBook(); else start.focus({ preventScroll: true });
