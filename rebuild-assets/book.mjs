@@ -1,9 +1,11 @@
 import { chapters, CONTENTS_PER_PAGE, readPage, remainingSeconds } from './book-data.mjs';
+import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
 const handbook = $('handbook'), splash = $('truck-entry'), start = $('start-engine'), stage = $('engine-stage'), canvas = $('engine-smoke'), status = $('engine-status');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let running = false, leaving = false, frame = 0, timer = 0, countdownTimer = 0, audioContext = null, source = null, master = null;
 let opened = false, current = readPage(location.hash), activeFrame = null, frameTimeout = 0;
+const music = createBookMusic($('book-music'));
 const drawings = {
  community: '<rect x="15" y="12" width="100" height="65" rx="14" fill="#fff" stroke="#204e7b" stroke-width="4"/><path d="M36 77v18l22-18" fill="#fff" stroke="#204e7b" stroke-width="4"/><circle cx="41" cy="42" r="8" fill="#4383bb"/><circle cx="65" cy="42" r="8" fill="#4383bb"/><circle cx="89" cy="42" r="8" fill="#4383bb"/>',
  truck: '<rect x="12" y="28" width="63" height="48" rx="5" fill="#bdcddd" stroke="#204e7b" stroke-width="4"/><path d="M75 41h24l18 20v15H75Z" fill="#4383bb" stroke="#204e7b" stroke-width="4"/><path d="M81 46h15l10 13H81Z" fill="#e8f4ff"/><circle cx="34" cy="78" r="10" fill="#173753"/><circle cx="97" cy="78" r="10" fill="#173753"/><path d="M22 41h41M22 52h41M22 63h24" stroke="#fff" stroke-width="4"/>',
@@ -23,7 +25,7 @@ function enterBook() {
  if (leaving) return; leaving = true; stopEngine();
  handbook.hidden = false; handbook.inert = false; opened = true;
  if (!location.hash) history.replaceState(null, '', '#contents');
- render(); splash.classList.add('leaving');
+ render(); music.open(); splash.classList.add('leaving');
  setTimeout(() => { splash.hidden = true; $('contents-title').focus({ preventScroll: true }); if (current.kind === 'chapter') $('chapter-title').focus({ preventScroll: true }); }, reduced ? 0 : 650);
 }
 function playDiesel(){
@@ -74,6 +76,7 @@ function smoke(){
 start.addEventListener('click', () => {
  if (running || leaving) return;
  running = true; start.disabled = true; start.textContent = 'Engine Running';
+ music.unlock();
  const deadline = performance.now() + 10000;
  status.textContent = 'Opening the foyer in 10 seconds…';
  countdownTimer = setInterval(() => { const seconds = remainingSeconds(deadline, performance.now()); status.textContent = seconds ? 'Opening the foyer in ' + seconds + (seconds === 1 ? ' second…' : ' seconds…') : 'Opening your handbook…'; }, 250);
@@ -82,12 +85,13 @@ start.addEventListener('click', () => {
  timer = setTimeout(enterBook, 10000);
 });
 $('engine-sound').addEventListener('change', () => { if (master) master.gain.value = $('engine-sound').checked ? .7 : 0; });
-$('skip-engine').addEventListener('click', enterBook);
-splash.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); enterBook(); } });
+$('skip-engine').addEventListener('click', () => { music.unlock(); enterBook(); });
+splash.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); music.unlock(); enterBook(); } });
 window.addEventListener('pagehide', stopEngine);
 function closeFrame() {
  clearTimeout(frameTimeout);
  if (activeFrame) { try { activeFrame.contentWindow.document.querySelectorAll('video,audio').forEach(media => media.pause()); } catch {} activeFrame.remove(); activeFrame = null; }
+ music.block('chapter-media', false); music.block('call-notes', false);
 }
 function canLeaveChapter() {
  try {
@@ -109,6 +113,17 @@ function prepareFrame(iframe, view, label, line) {
    const style = doc.createElement('style'); style.id = 'handbook-embed-style';
    style.textContent = `html,body{height:100%!important;min-height:0!important}body{display:flex!important;flex-direction:column!important;overflow:hidden!important;font-size:20px!important}body>header,.book-footer,#member-nav,.tfh-chat-next,.tfh-social-top,.tfh-neon-control{display:none!important}#book{width:100%!important;max-width:none!important;flex:1!important;min-height:0!important;margin:0!important;border:0!important;border-radius:0!important}.book-page{padding:18px!important}.book-page h1{font-size:28px!important}.book-page h2{font-size:25px!important}.book-page h3{font-size:23px!important}.book-page p,.book-page label,.book-page input,.book-page textarea,.book-page select,.book-page button,.book-page .btn,.book-page summary,dialog p,dialog label,dialog input,dialog textarea,dialog button{font-size:19px!important;line-height:1.5!important}.book-page .small,.book-page .meta,.book-page small{font-size:16px!important}.book-page button,.book-page .btn,dialog button{min-height:48px!important}.tfh-feed-tools{margin-top:0!important}#community .tfh-composer{margin-top:0!important}a,button,input,textarea,select{touch-action:manipulation}.tfh-post-body{font-size:19px!important}`;
    doc.head.append(style);
+   const syncMedia = () => {
+    if (activeFrame !== iframe) return;
+    music.block('chapter-media', [...doc.querySelectorAll('video,audio')].some(media => !media.paused && !media.ended));
+   };
+   ['play', 'playing', 'pause', 'ended', 'emptied'].forEach(type => doc.addEventListener(type, syncMedia, true));
+   iframe.contentWindow.addEventListener('tfh-book-page', event => {
+    if (activeFrame !== iframe) return;
+    music.block('call-notes', event.detail === 29);
+    syncMedia();
+   });
+   syncMedia();
    doc.addEventListener('click', event => {
     const link = event.target.closest('a[href]');
     if (!link || link.target === '_blank' || event.defaultPrevented) return;
@@ -123,6 +138,8 @@ function prepareFrame(iframe, view, label, line) {
 }
 function openTool(view, title, privacy, back) {
  closeFrame(); const body = $('chapter-body'); body.replaceChildren();
+ // Keep jazz silent throughout Call Notes, including microphone permission and recording.
+ music.block('call-notes', view === 'call-notes');
  const line = node('div', undefined, 'tool-status'); line.append(node('span', 'Opening ' + title + '…'));
  if (back) { const button = node('button', '← Workday tools', 'tool-back'); button.type = 'button'; button.addEventListener('click', () => render()); line.append(button); }
  const full = node('a', 'Open full page ↗'); full.href = 'index.html?view=' + encodeURIComponent(view); full.target = '_blank'; full.rel = 'noopener'; line.append(full); body.append(line);
