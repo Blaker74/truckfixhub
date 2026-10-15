@@ -26,7 +26,7 @@ test('null content and a whitespace search remain safe', () => {
 });
 test('share URLs target the existing discussion and reject injected paths', () => {
   globalThis.location = { href: 'https://truckfixhub.com/rebuild.html' };
-  assert.equal(discussionURL(posts[0].id), 'https://truckfixhub.com/index.html?discussion=' + posts[0].id);
+  assert.equal(discussionURL(posts[0].id), 'https://truckfixhub.com/tools.html?discussion=' + posts[0].id);
   assert.throws(() => discussionURL('javascript:alert(1)'));
   assert.throws(() => discussionURL('../private'));
 });
