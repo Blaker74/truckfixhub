@@ -137,10 +137,37 @@ export const chapters = [
     "gear": true
   },
   {
+    "id": "repair-help",
+    "title": "Truck Repair Guides",
+    "description": "Choose a topic. Read the guide, check its manufacturer sources, and prepare your questions.",
+    "chapter": 8,
+    "art": "parts",
+    "guides": true,
+    "privacy": "Free to read. No login required."
+  },
+  {
+    "id": "find-a-shop",
+    "title": "Find a Repair Shop",
+    "description": "Search local listings or open a nationwide manufacturer service locator.",
+    "chapter": 9,
+    "art": "road",
+    "resource": "truck-repair-shop-directory.html",
+    "privacy": "Public directory. Call the shop to confirm service and availability."
+  },
+  {
+    "id": "fuel-cost",
+    "title": "Trip Fuel Cost Calculator",
+    "description": "Enter your miles, fuel economy, and fuel price to estimate the trip.",
+    "chapter": 10,
+    "art": "truck",
+    "resource": "trip-fuel-cost-calculator.html",
+    "privacy": "No login required. Your calculation stays in your browser."
+  },
+  {
     "id": "casino",
     "title": "Casino",
     "description": "Take a break with your free-credit slot machine.",
-    "chapter": 8,
+    "chapter": 11,
     "art": "gear",
     "view": "casino",
     "privacy": "Free play only. No real-money wagering."
@@ -149,7 +176,7 @@ export const chapters = [
     "id": "sports",
     "title": "Sports Room",
     "description": "Relax with sports scores, highlights, and your sports room.",
-    "chapter": 9,
+    "chapter": 12,
     "art": "community",
     "view": "sports"
   }
@@ -159,7 +186,7 @@ export const contents = [
   chapter: index + 1, coverId: page.id, coverTitle: page.title, coverNumber: index * 2 + 1,
   title: chapters[index * 2 + 1].title, pageId: chapters[index * 2 + 1].id, pageNumber: index * 2 + 2
  })),
- ...chapters.filter(page => page.id === 'casino' || page.id === 'sports').map(page => ({
+ ...chapters.filter(page => !page.cover && page.chapter >= 8).map(page => ({
   chapter: page.chapter, title: page.title, pageId: page.id, pageNumber: chapters.indexOf(page) + 1
  }))
 ];

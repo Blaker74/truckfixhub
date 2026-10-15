@@ -1,0 +1,17 @@
+export const repairGuides = [
+ { title: 'DPF, DEF & Engine Derate', description: 'Understand the warnings and organize the information your technician needs.', file: 'class-8-emissions-dpf-def-derate.html', label: 'Emissions · manufacturer sources' },
+ { title: 'DD13 / DD15 Oil Suction Manifold', description: 'Read the documented campaign information and questions to ask about your engine.', file: 'dd13-dd15-oil-suction-manifold.html', label: 'Detroit · manufacturer sources' },
+ { title: 'ECM, CPC & TCM Communication', description: 'Learn what to record before a technician investigates a communication problem.', file: 'class-8-ecm-cpc-tcm-communication-problems.html', label: 'Electronics · manufacturer sources' },
+ { title: 'Cummins ISX: Fuel, EGR & Coolant', description: 'Review the sourced overview and prepare the engine details for a repair discussion.', file: 'cummins-isx-fuel-pump-egr-coolant-problems.html', label: 'Cummins · manufacturer sources' }
+];
+export const publicFiles = new Set(['resources.html', 'truck-repair-shop-directory.html', 'trip-fuel-cost-calculator.html', ...repairGuides.map(guide => guide.file)]);
+export function resourceDestination(href, base) {
+ const url = new URL(href, base), origin = new URL(base).origin;
+ if (!['http:', 'https:'].includes(url.protocol)) return { kind: 'device' };
+ if (url.origin !== origin) return { kind: 'external' };
+ const file = url.pathname.replace(/^\//, '');
+ if (publicFiles.has(file)) return { kind: 'resource', file, hash: url.hash };
+ if (url.searchParams.get('view') === 'forum') return { kind: 'chapter', id: 'community' };
+ if (!file || ['index.html', 'rebuild.html'].includes(file)) return { kind: 'chapter', id: url.hash === '#community' ? 'community' : 'contents' };
+ return { kind: 'external' };
+}
