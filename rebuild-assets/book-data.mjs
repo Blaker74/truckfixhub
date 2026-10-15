@@ -120,7 +120,7 @@ export const chapters = [
   {
     "id": "volvo",
     "title": "2027 Volvo VNL64T860",
-    "description": "Turn the page for Free Truck Repair Guides.",
+    "description": "Turn the page for Truck Repair Guides.",
     "cover": true,
     "chapter": 7,
     "image": "rebuild-assets/trucks/volvo-ai.webp",
@@ -129,28 +129,31 @@ export const chapters = [
     "generated": true
   },
   {
-    "id": "repair-guides",
-    "title": "Free Truck Repair Guides",
-    "description": "Find practical guides for emissions, engine and electrical symptoms.",
+    "id": "repair-help",
+    "title": "Truck Repair Guides",
+    "description": "Choose a topic. Read the guide, check its manufacturer sources, and prepare your questions.",
     "chapter": 7,
     "art": "parts",
-    "resource": "truck-repair-guides.html"
+    "guides": true,
+    "privacy": "Free to read. No login required."
   },
   {
-    "id": "repair-shops",
-    "title": "Repair Shop Locators",
-    "description": "Find nationwide service locators and Southeast Missouri repair shops.",
+    "id": "find-a-shop",
+    "title": "Find a Repair Shop",
+    "description": "Search local listings or open a nationwide manufacturer service locator.",
     "chapter": 8,
     "art": "road",
-    "resource": "truck-repair-shop-directory.html"
+    "resource": "truck-repair-shop-directory.html",
+    "privacy": "Public directory. Call the shop to confirm service and availability."
   },
   {
-    "id": "fuel-calculator",
+    "id": "fuel-cost",
     "title": "Trip Fuel Cost Calculator",
-    "description": "Enter miles, MPG and fuel price to estimate gallons and trip cost.",
+    "description": "Enter your miles, fuel economy, and fuel price to estimate the trip.",
     "chapter": 9,
-    "art": "road",
-    "resource": "trip-fuel-cost-calculator.html"
+    "art": "truck",
+    "resource": "trip-fuel-cost-calculator.html",
+    "privacy": "No login required. Your calculation stays in your browser."
   },
   {
     "id": "casino",

@@ -1,11 +1,12 @@
-import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=resources1';
+import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=final-order1';
+import { repairGuides, publicFiles, resourceDestination } from './road-resources.mjs?v=resources1';
 import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
 const handbook = $('handbook'), splash = $('truck-entry'), start = $('start-engine'), stage = $('engine-stage'), canvas = $('engine-smoke'), status = $('engine-status');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let running = false, leaving = false, frame = 0, timer = 0, countdownTimer = 0, audioContext = null, source = null, master = null;
 let opened = false, current = readPage(location.hash), activeFrame = null, frameTimeout = 0, reelAbort = null;
-let turnOverlay = null, turnCleanup = 0;
+let turnOverlay = null, turnCleanup = 0, contentsOffset = 0;
 const music = createBookMusic($('book-music'));
 const drawings = {
  community: '<rect x="15" y="12" width="100" height="65" rx="14" fill="#fff" stroke="#204e7b" stroke-width="4"/><path d="M36 77v18l22-18" fill="#fff" stroke="#204e7b" stroke-width="4"/><circle cx="41" cy="42" r="8" fill="#4383bb"/><circle cx="65" cy="42" r="8" fill="#4383bb"/><circle cx="89" cy="42" r="8" fill="#4383bb"/>',
@@ -104,6 +105,8 @@ function canLeaveChapter() {
 }
 function changePage(hash) { if (canLeaveChapter()) location.hash = hash; }
 handbook.addEventListener('click', event => {
+ const shortcut = event.target.closest('a[data-book-page]');
+ if (shortcut) { event.preventDefault(); changePage(shortcut.dataset.bookPage); return; }
  const link = event.target.closest('a[href^="#"]');
  if (link?.getAttribute('href') === '#account') { event.preventDefault(); openBookAccount(); return; }
  if (link && !canLeaveChapter()) event.preventDefault();
@@ -182,24 +185,59 @@ function openTool(view, title, privacy, back) {
  activeFrame = iframe; body.append(iframe);
  frameTimeout = setTimeout(() => { if (activeFrame === iframe) line.firstChild.textContent = 'Taking longer than usual. Try “Open full page.”'; }, 20000);
 }
-function renderResource(page) {
- closeFrame(); const body = $('chapter-body'); body.replaceChildren();
+
+function openPublicPage(file, title, backToGuides = false) {
+ if (!publicFiles.has(file)) return;
+ closeFrame();
+ const body = $('chapter-body'); body.replaceChildren();
  const line = node('div', undefined, 'tool-status');
- line.append(node('span', 'Free to use · No account required'));
- const full = node('a', 'Open full page ↗'); full.href = page.resource; full.target = '_blank'; full.rel = 'noopener'; line.append(full);
- const iframe = node('iframe'); iframe.title = page.title; iframe.src = page.resource;
+ if (backToGuides) {
+  const back = node('button', '← Repair guides'); back.type = 'button';
+  back.addEventListener('click', renderRepairGuides); line.append(back);
+ } else line.append(node('span', 'Free resource · No login required'));
+ const full = node('a', 'Open full page ↗'); full.href = file; full.target = '_blank'; full.rel = 'noopener'; line.append(full);
+ const iframe = node('iframe'); iframe.title = title; iframe.src = file;
  iframe.addEventListener('load', () => {
   if (activeFrame !== iframe) return;
-  try {
-   const doc = iframe.contentDocument;
-   // Resource links open separately so the handbook keeps its current page.
-   for (const link of doc.querySelectorAll('a[href]')) {
-    if (!link.getAttribute('href').startsWith('#')) { link.target = '_blank'; link.rel = 'noopener'; }
-   }
-  } catch {}
+  clearTimeout(frameTimeout);
+  const doc = iframe.contentDocument;
+  if (!doc) return;
+  const style = doc.createElement('style');
+  style.textContent = 'body{background:#fafbfd!important;color:#132d50!important;font-size:20px!important}body>header,footer{display:none!important}main{padding:18px!important;max-width:960px!important;margin:auto!important}.card{padding:20px!important}main>h1,main>article>h1{font-size:30px!important}label,input,select,button,.button{font-size:19px!important}button,.button,input,select{min-height:48px!important}';
+  doc.head.append(style);
+  doc.addEventListener('click', event => {
+   const link = event.target.closest('a[href]');
+   if (!link || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+   if (link.getAttribute('href').startsWith('#')) return;
+   const destination = resourceDestination(link.href, location.href);
+   if (destination.kind === 'chapter') { event.preventDefault(); changePage(destination.id); }
+   else if (destination.kind === 'resource') {
+    // Local guide links stay in this reading frame; the book navigation stays visible.
+    full.href = destination.file + destination.hash;
+   } else if (destination.kind === 'external') { link.target = '_blank'; link.rel = 'noopener noreferrer'; }
+  }, true);
  });
  activeFrame = iframe; body.append(line, iframe);
+ frameTimeout = setTimeout(() => { if (activeFrame === iframe) line.append(node('span', 'Use “Open full page” if this resource does not load.')); }, 20000);
 }
+function renderRepairGuides() {
+ closeFrame();
+ const body = $('chapter-body'); body.replaceChildren();
+ const grid = node('div', undefined, 'repair-guide-grid');
+ for (const guide of repairGuides) {
+  const card = node('article', undefined, 'repair-guide-card');
+  const label = node('p', guide.label, 'eyebrow');
+  const title = node('h2', guide.title); const description = node('p', guide.description);
+  const link = node('a', 'Read guide →', 'primary-link'); link.href = guide.file;
+  link.addEventListener('click', event => { event.preventDefault(); openPublicPage(guide.file, guide.title, true); });
+  card.append(label, title, description, link); grid.append(card);
+ }
+ body.append(grid);
+}
+$('contents-other').addEventListener('click', () => {
+ contentsOffset = contentsOffset ? 0 : 6; render(); $('contents-title').focus({ preventScroll: true });
+});
+
 function renderCover(page) {
  const body = $('chapter-body'); body.replaceChildren();
  const figure = node('figure', undefined, 'truck-photo');
@@ -272,7 +310,7 @@ function render() {
  const main = $('book-main'); main.classList.remove('page-arrive');
  if (isContents) {
   const list = $('chapter-list'); list.replaceChildren();
-  for (const item of contents) {
+  for (const item of contents.slice(contentsOffset, contentsOffset + 6)) {
    const row = node('li');
    const link = node('a', undefined, 'toc-link'); link.href = '#' + item.pageId;
    const number = node('span', String(item.chapter), 'toc-chapter');
@@ -284,7 +322,9 @@ function render() {
    if (item.coverId) { const cover = node('a', item.coverTitle + ' · cover page ' + item.coverNumber, 'toc-cover'); cover.href = '#' + item.coverId; row.append(cover); }
    list.append(row);
   }
-  $('contents-position').textContent = contents.length + ' chapters · ' + chapters.length + ' pages';
+  $('contents-position').textContent = contents.length + ' chapters · ' + chapters.length + ' pages · Free road tools need no login';
+  $('contents-sheet').textContent = 'Contents ' + (contentsOffset ? '2' : '1') + ' of 2';
+  $('contents-other').textContent = contentsOffset ? '← First chapters' : 'More chapters →';
   $('book-note').textContent = 'Next opens page 1: the Cascadia cover.';
  } else {
   const page = chapters[current.index];
@@ -296,7 +336,8 @@ function render() {
   if (page.cover) renderCover(page);
   else if (page.reels) renderReels();
   else if (page.gear) renderGear();
-  else if (page.resource) renderResource(page);
+  else if (page.guides) renderRepairGuides();
+  else if (page.resource) openPublicPage(page.resource, page.title);
   else if (page.view) openTool(page.view, page.title, page.privacy, false);
   $('book-note').textContent = current.index === chapters.length - 1 ? 'Final page · Thanks for keeping America moving.' : page.privacy || 'Page ' + (current.index + 1) + ' of ' + chapters.length + ' · Turn the page when you’re ready.';
  }
