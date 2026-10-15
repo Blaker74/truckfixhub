@@ -3,24 +3,25 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { chapters, contents, readPage, remainingSeconds, turnDirection } from '../rebuild-assets/book-data.mjs';
 
-test('sixteen pages keep the photo/tool sequence and end with Casino and Sports', () => {
+test('nineteen pages keep the photo/tool sequence and end with Casino, Sports and Shop Gear', () => {
  assert.deepEqual(chapters.map(page => page.id), [
   'cascadia','community','peterbilt','vins','international','call-notes','kenworth','customers',
-  'western-star','diesel-reel','mack','super-miller','volvo','gear','casino','sports'
+  'western-star','diesel-reel','mack','super-miller','volvo','repair-guides','repair-shops','fuel-calculator','casino','sports','gear'
  ]);
  assert.deepEqual(chapters.filter(page => page.view).map(page => page.view), ['forum','trucks','call-notes','customers','supermiller','casino','sports']);
- assert(chapters[9].reels); assert(chapters[13].gear);
+ assert(chapters[9].reels); assert(chapters.at(-1).gear);
 });
-test('contents maps seven truck chapters plus Casino and Sports to the correct pages', () => {
- assert.equal(contents.length, 9);
+test('contents maps seven truck chapters plus public resources, Casino, Sports and Gear to the correct pages', () => {
+ assert.equal(contents.length, 12);
  contents.slice(0,7).forEach((entry,index) => {
   assert.equal(entry.coverNumber, index*2+1);
   assert.equal(entry.pageNumber, index*2+2);
   assert.equal(chapters[entry.coverNumber-1].id,entry.coverId);
   assert.equal(chapters[entry.pageNumber-1].id,entry.pageId);
  });
- assert.equal(contents[7].pageId,'casino'); assert.equal(contents[7].pageNumber,15);
- assert.equal(contents[8].pageId,'sports'); assert.equal(contents[8].pageNumber,16);
+ assert.equal(contents[9].pageId,'casino'); assert.equal(contents[9].pageNumber,17);
+ assert.equal(contents[10].pageId,'sports'); assert.equal(contents[10].pageNumber,18);
+ assert.equal(contents[11].pageId,'gear'); assert.equal(contents[11].pageNumber,19);
 });
 test('all seven covers use generated artwork with clear labels and preserved prompts', () => {
  const covers=chapters.filter(page => page.cover);

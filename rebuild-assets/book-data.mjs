@@ -120,7 +120,7 @@ export const chapters = [
   {
     "id": "volvo",
     "title": "2027 Volvo VNL64T860",
-    "description": "Turn the page for Shop Gear & T-Shirts.",
+    "description": "Turn the page for Free Truck Repair Guides.",
     "cover": true,
     "chapter": 7,
     "image": "rebuild-assets/trucks/volvo-ai.webp",
@@ -129,18 +129,34 @@ export const chapters = [
     "generated": true
   },
   {
-    "id": "gear",
-    "title": "Shop Gear & T-Shirts",
-    "description": "Visit the official TruckFixHub store and shop our T-shirts.",
+    "id": "repair-guides",
+    "title": "Free Truck Repair Guides",
+    "description": "Find practical guides for emissions, engine and electrical symptoms.",
     "chapter": 7,
-    "art": "gear",
-    "gear": true
+    "art": "parts",
+    "resource": "truck-repair-guides.html"
+  },
+  {
+    "id": "repair-shops",
+    "title": "Repair Shop Locators",
+    "description": "Find nationwide service locators and Southeast Missouri repair shops.",
+    "chapter": 8,
+    "art": "road",
+    "resource": "truck-repair-shop-directory.html"
+  },
+  {
+    "id": "fuel-calculator",
+    "title": "Trip Fuel Cost Calculator",
+    "description": "Enter miles, MPG and fuel price to estimate gallons and trip cost.",
+    "chapter": 9,
+    "art": "road",
+    "resource": "trip-fuel-cost-calculator.html"
   },
   {
     "id": "casino",
     "title": "Casino",
     "description": "Take a break with your free-credit slot machine.",
-    "chapter": 8,
+    "chapter": 10,
     "art": "gear",
     "view": "casino",
     "privacy": "Free play only. No real-money wagering."
@@ -149,20 +165,26 @@ export const chapters = [
     "id": "sports",
     "title": "Sports Room",
     "description": "Relax with sports scores, highlights, and your sports room.",
-    "chapter": 9,
+    "chapter": 11,
     "art": "community",
     "view": "sports"
+  },
+  {
+    "id": "gear",
+    "title": "Shop Gear & T-Shirts",
+    "description": "Visit the official TruckFixHub store and shop our T-shirts.",
+    "chapter": 12,
+    "art": "gear",
+    "gear": true
   }
 ];
-export const contents = [
- ...chapters.filter(page => page.cover).map((page, index) => ({
-  chapter: index + 1, coverId: page.id, coverTitle: page.title, coverNumber: index * 2 + 1,
-  title: chapters[index * 2 + 1].title, pageId: chapters[index * 2 + 1].id, pageNumber: index * 2 + 2
- })),
- ...chapters.filter(page => page.id === 'casino' || page.id === 'sports').map(page => ({
-  chapter: page.chapter, title: page.title, pageId: page.id, pageNumber: chapters.indexOf(page) + 1
- }))
-];
+export const contents = chapters.filter(page => !page.cover).map(page => {
+ const cover = chapters.find(candidate => candidate.cover && candidate.chapter === page.chapter);
+ return {
+  chapter: page.chapter, title: page.title, pageId: page.id, pageNumber: chapters.indexOf(page) + 1,
+  ...(cover ? { coverId: cover.id, coverTitle: cover.title, coverNumber: chapters.indexOf(cover) + 1 } : {})
+ };
+});
 export function readPage(hash) {
  const value = hash.replace(/^#/, '');
  const index = chapters.findIndex(page => page.id === value);

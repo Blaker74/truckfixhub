@@ -1,4 +1,4 @@
-import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=homepage1';
+import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=resources1';
 import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
 const handbook = $('handbook'), splash = $('truck-entry'), start = $('start-engine'), stage = $('engine-stage'), canvas = $('engine-smoke'), status = $('engine-status');
@@ -182,6 +182,24 @@ function openTool(view, title, privacy, back) {
  activeFrame = iframe; body.append(iframe);
  frameTimeout = setTimeout(() => { if (activeFrame === iframe) line.firstChild.textContent = 'Taking longer than usual. Try “Open full page.”'; }, 20000);
 }
+function renderResource(page) {
+ closeFrame(); const body = $('chapter-body'); body.replaceChildren();
+ const line = node('div', undefined, 'tool-status');
+ line.append(node('span', 'Free to use · No account required'));
+ const full = node('a', 'Open full page ↗'); full.href = page.resource; full.target = '_blank'; full.rel = 'noopener'; line.append(full);
+ const iframe = node('iframe'); iframe.title = page.title; iframe.src = page.resource;
+ iframe.addEventListener('load', () => {
+  if (activeFrame !== iframe) return;
+  try {
+   const doc = iframe.contentDocument;
+   // Resource links open separately so the handbook keeps its current page.
+   for (const link of doc.querySelectorAll('a[href]')) {
+    if (!link.getAttribute('href').startsWith('#')) { link.target = '_blank'; link.rel = 'noopener'; }
+   }
+  } catch {}
+ });
+ activeFrame = iframe; body.append(line, iframe);
+}
 function renderCover(page) {
  const body = $('chapter-body'); body.replaceChildren();
  const figure = node('figure', undefined, 'truck-photo');
@@ -266,7 +284,7 @@ function render() {
    if (item.coverId) { const cover = node('a', item.coverTitle + ' · cover page ' + item.coverNumber, 'toc-cover'); cover.href = '#' + item.coverId; row.append(cover); }
    list.append(row);
   }
-  $('contents-position').textContent = 'Nine chapters · 16 pages';
+  $('contents-position').textContent = contents.length + ' chapters · ' + chapters.length + ' pages';
   $('book-note').textContent = 'Next opens page 1: the Cascadia cover.';
  } else {
   const page = chapters[current.index];
@@ -278,8 +296,9 @@ function render() {
   if (page.cover) renderCover(page);
   else if (page.reels) renderReels();
   else if (page.gear) renderGear();
+  else if (page.resource) renderResource(page);
   else if (page.view) openTool(page.view, page.title, page.privacy, false);
-  $('book-note').textContent = current.index === chapters.length - 1 ? 'Final page · Thanks for keeping America moving.' : page.privacy || 'Page ' + (current.index + 1) + ' of 16 · Turn the page when you’re ready.';
+  $('book-note').textContent = current.index === chapters.length - 1 ? 'Final page · Thanks for keeping America moving.' : page.privacy || 'Page ' + (current.index + 1) + ' of ' + chapters.length + ' · Turn the page when you’re ready.';
  }
  $('turn-back').disabled = isContents;
  $('turn-next').disabled = !isContents && current.index === chapters.length - 1;
