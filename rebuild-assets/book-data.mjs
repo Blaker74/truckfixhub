@@ -6,7 +6,7 @@ export const chapters = [
     "cover": true,
     "chapter": 1,
     "image": "rebuild-assets/trucks/cascadia-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "community",
     "generated": true
   },
@@ -26,7 +26,7 @@ export const chapters = [
     "cover": true,
     "chapter": 2,
     "image": "rebuild-assets/trucks/peterbilt-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "truck",
     "generated": true
   },
@@ -46,7 +46,7 @@ export const chapters = [
     "cover": true,
     "chapter": 3,
     "image": "rebuild-assets/trucks/international-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "work",
     "generated": true
   },
@@ -66,7 +66,7 @@ export const chapters = [
     "cover": true,
     "chapter": 4,
     "image": "rebuild-assets/trucks/kenworth-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "work",
     "generated": true
   },
@@ -86,7 +86,7 @@ export const chapters = [
     "cover": true,
     "chapter": 5,
     "image": "rebuild-assets/trucks/western-star-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "community",
     "generated": true
   },
@@ -105,7 +105,7 @@ export const chapters = [
     "cover": true,
     "chapter": 6,
     "image": "rebuild-assets/trucks/mack-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "road",
     "generated": true
   },
@@ -124,7 +124,7 @@ export const chapters = [
     "cover": true,
     "chapter": 7,
     "image": "rebuild-assets/trucks/volvo-ai.webp",
-    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "credit": "AI-generated cover art · model-inspired illustration",
     "art": "gear",
     "generated": true
   },
@@ -173,10 +173,19 @@ export const chapters = [
     "view": "sports"
   },
   {
+    "id": "calendar",
+    "title": "My Calendar",
+    "description": "Keep appointments, follow-ups, service dates, and trucking events organized in one place.",
+    "chapter": 12,
+    "art": "work",
+    "view": "calendar",
+    "privacy": "Private: your calendar stays with your account."
+  },
+  {
     "id": "gear",
     "title": "Shop Gear & T-Shirts",
     "description": "Visit the official TruckFixHub store and shop our T-shirts.",
-    "chapter": 12,
+    "chapter": 13,
     "art": "gear",
     "gear": true
   }
