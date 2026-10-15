@@ -1,10 +1,11 @@
-import { chapters, contents, readPage, remainingSeconds } from './book-data.mjs';
+import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=page-turn1';
 import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
 const handbook = $('handbook'), splash = $('truck-entry'), start = $('start-engine'), stage = $('engine-stage'), canvas = $('engine-smoke'), status = $('engine-status');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let running = false, leaving = false, frame = 0, timer = 0, countdownTimer = 0, audioContext = null, source = null, master = null;
 let opened = false, current = readPage(location.hash), activeFrame = null, frameTimeout = 0, reelAbort = null;
+let turnOverlay = null, turnCleanup = 0;
 const music = createBookMusic($('book-music'));
 const drawings = {
  community: '<rect x="15" y="12" width="100" height="65" rx="14" fill="#fff" stroke="#204e7b" stroke-width="4"/><path d="M36 77v18l22-18" fill="#fff" stroke="#204e7b" stroke-width="4"/><circle cx="41" cy="42" r="8" fill="#4383bb"/><circle cx="65" cy="42" r="8" fill="#4383bb"/><circle cx="89" cy="42" r="8" fill="#4383bb"/>',
@@ -92,7 +93,7 @@ function closeFrame() {
  clearTimeout(frameTimeout);
  if (reelAbort) { reelAbort.abort(); reelAbort = null; }
  if (activeFrame) { try { activeFrame.contentWindow.document.querySelectorAll('video,audio').forEach(media => media.pause()); } catch {} activeFrame.remove(); activeFrame = null; }
- music.block('chapter-media', false); music.block('call-notes', false);
+ music.block('chapter-media', false); music.block('call-notes', false); music.block('casino', false);
 }
 function canLeaveChapter() {
  try {
@@ -121,7 +122,7 @@ function prepareFrame(iframe, view, label, line) {
    ['play', 'playing', 'pause', 'ended', 'emptied'].forEach(type => doc.addEventListener(type, syncMedia, true));
    iframe.contentWindow.addEventListener('tfh-book-page', event => {
     if (activeFrame !== iframe) return;
-    music.block('call-notes', event.detail === 29);
+    music.block('call-notes', event.detail === 29); music.block('casino', event.detail === 10);
     syncMedia();
    });
    syncMedia();
@@ -140,7 +141,7 @@ function prepareFrame(iframe, view, label, line) {
 function openTool(view, title, privacy, back) {
  closeFrame(); const body = $('chapter-body'); body.replaceChildren();
  // Keep jazz silent throughout Call Notes, including microphone permission and recording.
- music.block('call-notes', view === 'call-notes');
+ music.block('call-notes', view === 'call-notes'); music.block('casino', view === 'casino');
  const line = node('div', undefined, 'tool-status'); line.append(node('span', 'Opening ' + title + '…'));
  if (back) { const button = node('button', '← Workday tools', 'tool-back'); button.type = 'button'; button.addEventListener('click', () => render()); line.append(button); }
  const full = node('a', 'Open full page ↗'); full.href = 'index.html?view=' + encodeURIComponent(view); full.target = '_blank'; full.rel = 'noopener'; line.append(full); body.append(line);
@@ -153,11 +154,11 @@ function openTool(view, title, privacy, back) {
 function renderCover(page) {
  const body = $('chapter-body'); body.replaceChildren();
  const figure = node('figure', undefined, 'truck-photo');
- const image = node('img'); image.src = page.image; image.alt = page.title + ' truck'; image.decoding = 'async';
- image.addEventListener('error', () => { image.replaceWith(node('p', 'Photo could not load. Use the photo source below to view it.')); });
+ const image = node('img'); image.src = page.image; image.alt = 'AI-generated, model-inspired cover art of a ' + page.title + ' truck'; image.decoding = 'async';
+ image.addEventListener('error', () => { image.replaceWith(node('p', 'Cover art could not load. Try the full-image link below.')); });
  const caption = node('figcaption');
- const credit = node('a', 'Photo: ' + page.credit + ' ↗'); credit.href = page.source; credit.target = '_blank'; credit.rel = 'noopener';
- const full = node('a', 'View full photo ↗'); full.href = page.image; full.target = '_blank'; full.rel = 'noopener';
+ const credit = node('span', page.credit);
+ const full = node('a', 'View full artwork ↗'); full.href = page.image; full.target = '_blank'; full.rel = 'noopener';
  caption.append(credit, full); figure.append(image, caption); body.append(figure);
 }
 function renderGear() {
@@ -184,12 +185,42 @@ async function renderReels() {
  try { const { startCommunity } = await import('./community.mjs?v=truckbook4'); if (!controller.signal.aborted) await startCommunity({ initialMode: 'clips', externalDiscussion: true, signal: controller.signal }); }
  catch { if (!controller.signal.aborted) $('community-status').textContent = 'Diesel Reel could not connect. Open the community to watch or share videos.'; }
 }
+function makeTurningPage(previous, next) {
+ clearTimeout(turnCleanup); turnOverlay?.remove(); turnOverlay = null;
+ const direction = turnDirection(previous, next);
+ if (reduced || !direction) return null;
+ const stage = node('div', undefined, 'turn-stage'); stage.setAttribute('aria-hidden', 'true'); stage.inert = true;
+ const sheet = node('div', undefined, 'turn-sheet turn-' + direction);
+ const front = node('div', undefined, 'turn-face turn-front');
+ if (previous.kind === 'contents') {
+  const paper = $('contents-page').cloneNode(true);
+  paper.removeAttribute('id'); paper.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+  paper.hidden = false; front.append(paper);
+ } else {
+  const page = chapters[previous.index];
+  const heading = $('chapter-page').querySelector('.chapter-heading').cloneNode(true);
+  heading.querySelectorAll('[id]').forEach(el => el.removeAttribute('id')); front.append(heading);
+  const body = node('div', undefined, 'turn-preview-body');
+  const visual = $('chapter-body').querySelector('.truck-photo, .gear-page');
+  if (visual) body.append(visual.cloneNode(true));
+  else {
+   // The paper effect uses a description, never a copy of private records or form values.
+   body.append(node('p', page.description, 'turn-preview-text'), node('div', undefined, 'turn-paper-lines'));
+  }
+  front.append(body);
+ }
+ const back = node('div', undefined, 'turn-face turn-paper-back');
+ const ghost = front.cloneNode(true); ghost.className = 'turn-ghost'; back.append(ghost);
+ sheet.append(front, back); stage.append(sheet); return stage;
+}
 function render() {
  if (!opened) return;
- current = readPage(location.hash); closeFrame();
+ const incoming = readPage(location.hash);
+ const turning = makeTurningPage(current, incoming);
+ current = incoming; closeFrame();
  const isContents = current.kind === 'contents';
  $('contents-page').hidden = !isContents; $('chapter-page').hidden = isContents;
- const main = $('book-main'); main.classList.remove('page-arrive'); void main.offsetWidth; main.classList.add('page-arrive');
+ const main = $('book-main'); main.classList.remove('page-arrive');
  if (isContents) {
   const list = $('chapter-list'); list.replaceChildren();
   for (const item of contents) {
@@ -200,10 +231,11 @@ function render() {
    const dots = node('span', undefined, 'toc-dots'); dots.setAttribute('aria-hidden', 'true');
    link.append(number, title, dots, node('span', String(item.pageNumber), 'toc-page'));
    link.setAttribute('aria-label', 'Chapter ' + item.chapter + ': ' + item.title + ', page ' + item.pageNumber);
-   const cover = node('a', item.coverTitle + ' · cover page ' + item.coverNumber, 'toc-cover'); cover.href = '#' + item.coverId;
-   row.append(link, cover); list.append(row);
+   row.append(link);
+   if (item.coverId) { const cover = node('a', item.coverTitle + ' · cover page ' + item.coverNumber, 'toc-cover'); cover.href = '#' + item.coverId; row.append(cover); }
+   list.append(row);
   }
-  $('contents-position').textContent = 'Seven chapters · 14 pages';
+  $('contents-position').textContent = 'Nine chapters · 16 pages';
   $('book-note').textContent = 'Next opens page 1: the Cascadia cover.';
  } else {
   const page = chapters[current.index];
@@ -216,10 +248,16 @@ function render() {
   else if (page.reels) renderReels();
   else if (page.gear) renderGear();
   else if (page.view) openTool(page.view, page.title, page.privacy, false);
-  $('book-note').textContent = current.index === chapters.length - 1 ? 'Final page · Thanks for keeping America moving.' : page.privacy || 'Page ' + (current.index + 1) + ' of 14 · Turn the page when you’re ready.';
+  $('book-note').textContent = current.index === chapters.length - 1 ? 'Final page · Thanks for keeping America moving.' : page.privacy || 'Page ' + (current.index + 1) + ' of 16 · Turn the page when you’re ready.';
  }
  $('turn-back').disabled = isContents;
  $('turn-next').disabled = !isContents && current.index === chapters.length - 1;
+ if (turning) {
+  turnOverlay = turning; main.append(turning);
+  turnCleanup = setTimeout(() => { if (turnOverlay === turning) { turning.remove(); turnOverlay = null; } }, 760);
+ }
+ const nextCover = chapters.slice(isContents ? 0 : current.index + 1).find(page => page.cover);
+ if (nextCover) { const preload = new Image(); preload.src = nextCover.image; }
 }
 $('turn-back').addEventListener('click', () => {
  if (current.kind === 'contents') return;
