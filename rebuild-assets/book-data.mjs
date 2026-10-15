@@ -5,10 +5,10 @@ export const chapters = [
     "description": "Turn the page for Trucking Community Chat.",
     "cover": true,
     "chapter": 1,
-    "image": "rebuild-assets/trucks/cascadia.webp",
-    "source": "https://premiertruck.com/inventory/New-2027-FREIGHTLINER-Cascadia-3AKJHHDR4VSXH6375-957",
-    "credit": "Premier Truck Group",
-    "art": "community"
+    "image": "rebuild-assets/trucks/cascadia-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "community",
+    "generated": true
   },
   {
     "id": "community",
@@ -25,10 +25,10 @@ export const chapters = [
     "description": "Turn the page for My VIN List.",
     "cover": true,
     "chapter": 2,
-    "image": "rebuild-assets/trucks/peterbilt.webp",
-    "source": "https://www.soarr.com/for-sale/trucks/specs/16440095/2027-Peterbilt-579",
-    "credit": "SOARR / listing seller",
-    "art": "truck"
+    "image": "rebuild-assets/trucks/peterbilt-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "truck",
+    "generated": true
   },
   {
     "id": "vins",
@@ -45,10 +45,10 @@ export const chapters = [
     "description": "Turn the page for My Call Notes.",
     "cover": true,
     "chapter": 3,
-    "image": "rebuild-assets/trucks/international.webp",
-    "source": "https://ascendancetrucks.com/inventory/New-2027-INTERNATIONAL-LT-3HSDZSZR2VN812216",
-    "credit": "Ascendance Truck Centers",
-    "art": "work"
+    "image": "rebuild-assets/trucks/international-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "work",
+    "generated": true
   },
   {
     "id": "call-notes",
@@ -65,10 +65,10 @@ export const chapters = [
     "description": "Turn the page for My Customer List.",
     "cover": true,
     "chapter": 4,
-    "image": "rebuild-assets/trucks/kenworth.webp",
-    "source": "https://www.impelunion.com/vehicles/2027-kenworth-t680-u-12395",
-    "credit": "Impel Union",
-    "art": "work"
+    "image": "rebuild-assets/trucks/kenworth-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "work",
+    "generated": true
   },
   {
     "id": "customers",
@@ -85,10 +85,10 @@ export const chapters = [
     "description": "Turn the page for Diesel Reel.",
     "cover": true,
     "chapter": 5,
-    "image": "rebuild-assets/trucks/western-star.webp",
-    "source": "https://premiertruck.com/inventory/New-2027-WESTERN_STAR-49X-5KJJBWDRXVPXE0582-990",
-    "credit": "Premier Truck Group",
-    "art": "community"
+    "image": "rebuild-assets/trucks/western-star-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "community",
+    "generated": true
   },
   {
     "id": "diesel-reel",
@@ -104,10 +104,10 @@ export const chapters = [
     "description": "Turn the page for Super Miller.",
     "cover": true,
     "chapter": 6,
-    "image": "rebuild-assets/trucks/mack.webp",
-    "source": "https://www.nortrux.com/product-page/2027-hb64t-64-mr-stock-38392",
-    "credit": "Nortrux",
-    "art": "road"
+    "image": "rebuild-assets/trucks/mack-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "road",
+    "generated": true
   },
   {
     "id": "super-miller",
@@ -123,10 +123,10 @@ export const chapters = [
     "description": "Turn the page for Shop Gear & T-Shirts.",
     "cover": true,
     "chapter": 7,
-    "image": "rebuild-assets/trucks/volvo.webp",
-    "source": "https://www.tomnehl.com/truck-sales/truck?id=4V4BC9EH1VN722305",
-    "credit": "Tom Nehl Truck Company",
-    "art": "gear"
+    "image": "rebuild-assets/trucks/volvo-ai.webp",
+    "credit": "AI-generated cover art \u00b7 model-inspired illustration",
+    "art": "gear",
+    "generated": true
   },
   {
     "id": "gear",
@@ -135,15 +135,42 @@ export const chapters = [
     "chapter": 7,
     "art": "gear",
     "gear": true
+  },
+  {
+    "id": "casino",
+    "title": "Casino",
+    "description": "Take a break with your free-credit slot machine.",
+    "chapter": 8,
+    "art": "gear",
+    "view": "casino",
+    "privacy": "Free play only. No real-money wagering."
+  },
+  {
+    "id": "sports",
+    "title": "Sports Room",
+    "description": "Relax with sports scores, highlights, and your sports room.",
+    "chapter": 9,
+    "art": "community",
+    "view": "sports"
   }
 ];
-export const contents = chapters.filter(page => page.cover).map((page, index) => ({
- chapter: index + 1, coverId: page.id, coverTitle: page.title, coverNumber: index * 2 + 1,
- title: chapters[index * 2 + 1].title, pageId: chapters[index * 2 + 1].id, pageNumber: index * 2 + 2
-}));
+export const contents = [
+ ...chapters.filter(page => page.cover).map((page, index) => ({
+  chapter: index + 1, coverId: page.id, coverTitle: page.title, coverNumber: index * 2 + 1,
+  title: chapters[index * 2 + 1].title, pageId: chapters[index * 2 + 1].id, pageNumber: index * 2 + 2
+ })),
+ ...chapters.filter(page => page.id === 'casino' || page.id === 'sports').map(page => ({
+  chapter: page.chapter, title: page.title, pageId: page.id, pageNumber: chapters.indexOf(page) + 1
+ }))
+];
 export function readPage(hash) {
  const value = hash.replace(/^#/, '');
  const index = chapters.findIndex(page => page.id === value);
  return index >= 0 ? { kind: 'chapter', index } : { kind: 'contents', index: 0 };
 }
 export function remainingSeconds(deadline, now) { return Math.max(0, Math.ceil((deadline - now) / 1000)); }
+export function turnDirection(previous, next) {
+ const order = page => page.kind === 'contents' ? -1 : page.index;
+ const difference = order(next) - order(previous);
+ return difference === 0 ? null : difference > 0 ? 'forward' : 'backward';
+}
