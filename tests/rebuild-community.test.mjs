@@ -30,3 +30,15 @@ test('share URLs target the existing discussion and reject injected paths', () =
   assert.throws(() => discussionURL('javascript:alert(1)'));
   assert.throws(() => discussionURL('../private'));
 });
+
+test('leaving Diesel Reel before it mounts prevents network and account work', async () => {
+ const { startCommunity } = await import('../rebuild-assets/community.mjs');
+ const previous = globalThis.document;
+ const oldFetch = globalThis.fetch;
+ let calls=0;
+ globalThis.document={getElementById:()=>({}),querySelectorAll:()=>[]};
+ globalThis.fetch=async()=>{calls++;throw new Error('Unexpected request');};
+ const controller=new AbortController();controller.abort();
+ try { await startCommunity({signal:controller.signal,initialMode:'clips'});assert.equal(calls,0); }
+ finally {globalThis.document=previous;globalThis.fetch=oldFetch;}
+});

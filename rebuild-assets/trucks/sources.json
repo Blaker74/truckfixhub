@@ -1,0 +1,58 @@
+[
+  {
+    "id": "cascadia",
+    "title": "2027 Freightliner Cascadia",
+    "image": "rebuild-assets/trucks/cascadia.webp",
+    "source": "https://premiertruck.com/inventory/New-2027-FREIGHTLINER-Cascadia-3AKJHHDR4VSXH6375-957",
+    "credit": "Premier Truck Group",
+    "source_image": "https://images.app.ridemotive.com/ffqhxdrqb9ijibbezfo61gmrk5ey"
+  },
+  {
+    "id": "peterbilt",
+    "title": "2027 Peterbilt 579",
+    "image": "rebuild-assets/trucks/peterbilt.webp",
+    "source": "https://www.soarr.com/for-sale/trucks/specs/16440095/2027-Peterbilt-579",
+    "credit": "SOARR / listing seller",
+    "source_image": "https://orion.soarr.com/photos/16440095/xl/2027-peterbilt-579.7.jpg"
+  },
+  {
+    "id": "international",
+    "title": "2027 International LT",
+    "image": "rebuild-assets/trucks/international.webp",
+    "source": "https://ascendancetrucks.com/inventory/New-2027-INTERNATIONAL-LT-3HSDZSZR2VN812216",
+    "credit": "Ascendance Truck Centers",
+    "source_image": "https://images.app.ridemotive.com/hoeppqj98cwiyndxxy8i4vk62s7t"
+  },
+  {
+    "id": "kenworth",
+    "title": "2027 Kenworth T680",
+    "image": "rebuild-assets/trucks/kenworth.webp",
+    "source": "https://www.impelunion.com/vehicles/2027-kenworth-t680-u-12395",
+    "credit": "Impel Union",
+    "source_image": "https://cdn.prod.website-files.com/6970a5edb9f90d273e301b1e/69ca643a0ee2d710d7fb3a58_12395_metacatalog.jpg"
+  },
+  {
+    "id": "western-star",
+    "title": "2027 Western Star 49X",
+    "image": "rebuild-assets/trucks/western-star.webp",
+    "source": "https://premiertruck.com/inventory/New-2027-WESTERN_STAR-49X-5KJJBWDRXVPXE0582-990",
+    "credit": "Premier Truck Group",
+    "source_image": "https://images.app.ridemotive.com/lrb08z77l2u8mmtln0bbn503e9a4"
+  },
+  {
+    "id": "mack",
+    "title": "2027 Mack Pioneer",
+    "image": "rebuild-assets/trucks/mack.webp",
+    "source": "https://www.nortrux.com/product-page/2027-hb64t-64-mr-stock-38392",
+    "credit": "Nortrux",
+    "source_image": "https://static.wixstatic.com/media/90a925_b03b58eafc7d48bb9da5305a224b2472~mv2.jpg/v1/fill/w_980%2Ch_735%2Cal_c%2Cq_85%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/90a925_b03b58eafc7d48bb9da5305a224b2472~mv2.jpg"
+  },
+  {
+    "id": "volvo",
+    "title": "2027 Volvo VNL64T860",
+    "image": "rebuild-assets/trucks/volvo.webp",
+    "source": "https://www.tomnehl.com/truck-sales/truck?id=4V4BC9EH1VN722305",
+    "credit": "Tom Nehl Truck Company",
+    "source_image": "https://www.tomnehl.com/media/lgrpy0d4/2027-volvo-2.png"
+  }
+]

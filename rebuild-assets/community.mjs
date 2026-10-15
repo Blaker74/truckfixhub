@@ -24,7 +24,7 @@ function element(tag, text, className) {
   return el;
 }
 
-export async function startCommunity() {
+export async function startCommunity(options = {}) {
   const feed = document.getElementById('community-feed');
   if (!feed) return;
   const status = document.getElementById('community-status');
@@ -32,18 +32,23 @@ export async function startCommunity() {
   const query = document.getElementById('community-search');
   const authNote = document.getElementById('community-auth-note');
   const tabs = [...document.querySelectorAll('[data-feed-mode]')];
-  let posts = [], media = new Map(), mode = 'latest', saved = new Set(), db = null, token = null, loading = false, revision = 0;
+  let posts = [], media = new Map(), mode = options.initialMode || 'latest', saved = new Set(), db = null, token = null, loading = false, revision = 0, disposed = false, authSubscription = null;
+  options.signal?.addEventListener('abort', () => { disposed = true; authSubscription?.unsubscribe(); feed.querySelectorAll('video').forEach(video => video.pause()); }, { once: true });
+  if (options.signal?.aborted) return;
   try { const ids = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); if (Array.isArray(ids)) saved = new Set(ids.filter(id => typeof id === 'string').slice(0, 500)); } catch {}
 
   async function request(path) {
     const headers = { apikey: KEY };
     if (token) headers.Authorization = 'Bearer ' + token;
-    const response = await fetch(PROJECT + '/rest/v1/' + path, { headers, signal: AbortSignal.timeout(15000) });
+    const timeout = AbortSignal.timeout(15000);
+    const signal = options.signal && AbortSignal.any ? AbortSignal.any([timeout, options.signal]) : timeout;
+    const response = await fetch(PROJECT + '/rest/v1/' + path, { headers, signal });
     if (!response.ok) throw new Error('Community request failed (' + response.status + ')');
     return response.json();
   }
 
   function render() {
+    if (disposed) return;
     // Pause playback before removing videos on filter changes and refresh.
     for (const video of feed.querySelectorAll('video')) video.pause();
     feed.replaceChildren();
@@ -61,6 +66,7 @@ export async function startCommunity() {
       if (Number.isFinite(date.getTime())) { time.dateTime = date.toISOString(); time.textContent = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); }
       byline.append(time); heading.append(avatar, byline); card.append(heading);
       const title = element('a', post.title || 'Community post'); title.href = discussionURL(post.id);
+      if (options.externalDiscussion) { title.target = '_blank'; title.rel = 'noopener'; }
       card.append(element('h3')); card.lastChild.append(title);
       card.append(element('p', (post.body || '').slice(0, 1200), 'post-body'));
       for (const item of (media.get(post.id) || []).slice(0, 4)) {
@@ -78,6 +84,7 @@ export async function startCommunity() {
       }
       const actions = element('div', undefined, 'post-actions');
       const open = element('a', 'Like · Comment →'); open.href = discussionURL(post.id);
+      if (options.externalDiscussion) { open.target = '_blank'; open.rel = 'noopener'; }
       const save = element('button', saved.has(post.id) ? 'Saved' : 'Save'); save.type = 'button'; save.setAttribute('aria-pressed', String(saved.has(post.id)));
       save.addEventListener('click', () => {
         const next = new Set(saved);
@@ -104,7 +111,7 @@ export async function startCommunity() {
   }
 
   async function load() {
-    if (loading) return;
+    if (loading || disposed) return;
     loading = true; refresh.disabled = true; status.textContent = 'Loading community posts…';
     const started = revision;
     let mediaWarning = '';
@@ -122,10 +129,11 @@ export async function startCommunity() {
           }
         } catch { mediaWarning = ' Photos and videos could not load. Refresh or open the community to retry.'; }
       }
-      if (started !== revision) return;
+      if (started !== revision || disposed) return;
       posts = nextPosts; media = nextMedia;
       render(); status.textContent = 'Showing ' + posts.length + ' of the latest posts.' + mediaWarning;
     } catch {
+      if (disposed) return;
       status.textContent = 'Community unavailable right now. Tap Refresh to retry, or open the community below.';
       if (!posts.length) feed.replaceChildren(element('p', 'Your community posts will appear here when the connection is restored.', 'feed-empty'));
     } finally { loading = false; refresh.disabled = false; if (started !== revision) setTimeout(load, 0); }
@@ -135,19 +143,24 @@ export async function startCommunity() {
   query.addEventListener('input', render);
   refresh.addEventListener('click', load);
   await load();
+  if (disposed) return;
   // Load public posts even if the optional account library is unavailable.
   try {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm');
+    if (disposed) return;
     db = createClient(PROJECT, KEY);
     const { data } = await db.auth.getSession();
+    if (disposed) return;
     token = data.session?.access_token || null;
     authNote.hidden = !!token;
     if (token) await load();
-    db.auth.onAuthStateChange((_event, session) => {
+    if (disposed) return;
+    const { data: auth } = db.auth.onAuthStateChange((_event, session) => {
+      if (disposed) return;
       const next = session?.access_token || null;
       if (next !== token) { token = next; revision++; media = new Map(); render(); authNote.hidden = !!token; setTimeout(load, 0); }
     });
+    authSubscription = auth.subscription;
   } catch { authNote.hidden = false; }
 }
 
-if (typeof document !== 'undefined') startCommunity();

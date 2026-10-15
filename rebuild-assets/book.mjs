@@ -1,10 +1,10 @@
-import { chapters, CONTENTS_PER_PAGE, readPage, remainingSeconds } from './book-data.mjs';
+import { chapters, contents, readPage, remainingSeconds } from './book-data.mjs';
 import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
 const handbook = $('handbook'), splash = $('truck-entry'), start = $('start-engine'), stage = $('engine-stage'), canvas = $('engine-smoke'), status = $('engine-status');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let running = false, leaving = false, frame = 0, timer = 0, countdownTimer = 0, audioContext = null, source = null, master = null;
-let opened = false, current = readPage(location.hash), activeFrame = null, frameTimeout = 0;
+let opened = false, current = readPage(location.hash), activeFrame = null, frameTimeout = 0, reelAbort = null;
 const music = createBookMusic($('book-music'));
 const drawings = {
  community: '<rect x="15" y="12" width="100" height="65" rx="14" fill="#fff" stroke="#204e7b" stroke-width="4"/><path d="M36 77v18l22-18" fill="#fff" stroke="#204e7b" stroke-width="4"/><circle cx="41" cy="42" r="8" fill="#4383bb"/><circle cx="65" cy="42" r="8" fill="#4383bb"/><circle cx="89" cy="42" r="8" fill="#4383bb"/>',
@@ -90,6 +90,7 @@ splash.addEventListener('keydown', event => { if (event.key === 'Escape') { even
 window.addEventListener('pagehide', stopEngine);
 function closeFrame() {
  clearTimeout(frameTimeout);
+ if (reelAbort) { reelAbort.abort(); reelAbort = null; }
  if (activeFrame) { try { activeFrame.contentWindow.document.querySelectorAll('video,audio').forEach(media => media.pause()); } catch {} activeFrame.remove(); activeFrame = null; }
  music.block('chapter-media', false); music.block('call-notes', false);
 }
@@ -149,53 +150,83 @@ function openTool(view, title, privacy, back) {
  activeFrame = iframe; body.append(iframe);
  frameTimeout = setTimeout(() => { if (activeFrame === iframe) line.firstChild.textContent = 'Taking longer than usual. Try “Open full page.”'; }, 20000);
 }
+function renderCover(page) {
+ const body = $('chapter-body'); body.replaceChildren();
+ const figure = node('figure', undefined, 'truck-photo');
+ const image = node('img'); image.src = page.image; image.alt = page.title + ' truck'; image.decoding = 'async';
+ image.addEventListener('error', () => { image.replaceWith(node('p', 'Photo could not load. Use the photo source below to view it.')); });
+ const caption = node('figcaption');
+ const credit = node('a', 'Photo: ' + page.credit + ' ↗'); credit.href = page.source; credit.target = '_blank'; credit.rel = 'noopener';
+ const full = node('a', 'View full photo ↗'); full.href = page.image; full.target = '_blank'; full.rel = 'noopener';
+ caption.append(credit, full); figure.append(image, caption); body.append(figure);
+}
+function renderGear() {
+ const body = $('chapter-body'); body.replaceChildren();
+ const gear = node('div', undefined, 'gear-page');
+ const photo = node('div', undefined, 'gear-shirt');
+ photo.innerHTML = '<svg viewBox="0 0 300 340" role="img" aria-label="TruckFixHub T-shirt design illustration" xmlns="http://www.w3.org/2000/svg"><path d="M98 28 22 76l35 66 35-20v184h116V122l35 20 35-66-76-48c-10 36-94 36-104 0Z" fill="white" stroke="#8094ad" stroke-width="5"/><path d="M98 28c0 55 104 55 104 0" fill="none" stroke="#b0b7bc" stroke-width="5"/><image href="rebuild-assets/truckfixhub-logo.webp" x="98" y="105" width="104" height="100"/></svg>';
+ const text = node('div'); text.append(node('h2', 'Wear TruckFixHub.'), node('p', 'Our official T-shirts and gear. Choose a shirt, size, and color in the store.'));
+ const shirt = node('a', 'Shop this T-shirt ↗', 'primary-link'); shirt.href = 'https://truckfixhub-gear-shop.fourthwall.com/products/truckfixhub-keeping-america-moving-t-shirt'; shirt.target = '_blank'; shirt.rel = 'noopener';
+ const store = node('a', 'Browse all official gear ↗', 'store-link'); store.href = 'https://truckfixhub-gear-shop.fourthwall.com/'; store.target = '_blank'; store.rel = 'noopener';
+ text.append(shirt, store, node('p', 'The store opens in a new tab. Your book stays here.', 'page-note')); gear.append(photo, text); body.append(gear);
+}
+async function renderReels() {
+ const body = $('chapter-body'); body.replaceChildren();
+ const wrap = node('div', undefined, 'reel-page');
+ // Fixed controls; visitor content is rendered safely by the existing community module.
+ wrap.innerHTML = `<div class="reel-toolbar"><a class="primary-link" href="index.html?view=forum" target="_blank" rel="noopener">Share a truck video ↗</a><button id="community-refresh" type="button">Refresh</button></div><label for="community-search">Find a truck video in the latest 24 posts</label><input id="community-search" type="search" placeholder="Search videos…"><p id="community-status" role="status" aria-live="polite">Loading Diesel Reel…</p><p id="community-auth-note"><a href="index.html?view=account" target="_blank" rel="noopener">Sign in</a> to watch community videos.</p><div id="community-feed" class="reel-gallery"></div>`;
+ body.append(wrap); const controller = new AbortController(); reelAbort = controller;
+ const syncReelAudio = () => { if (reelAbort === controller) music.block('chapter-media', [...wrap.querySelectorAll('video')].some(video => !video.paused && !video.ended)); };
+ ['play','playing','pause','ended'].forEach(type => wrap.addEventListener(type, event => {
+  if (event.type === 'play') wrap.querySelectorAll('video').forEach(video => { if (video !== event.target) video.pause(); });
+  syncReelAudio();
+ }, true));
+ try { const { startCommunity } = await import('./community.mjs?v=truckbook4'); if (!controller.signal.aborted) await startCommunity({ initialMode: 'clips', externalDiscussion: true, signal: controller.signal }); }
+ catch { if (!controller.signal.aborted) $('community-status').textContent = 'Diesel Reel could not connect. Open the community to watch or share videos.'; }
+}
 function render() {
  if (!opened) return;
  current = readPage(location.hash); closeFrame();
- const contents = current.kind === 'contents';
- $('contents-page').hidden = !contents; $('chapter-page').hidden = contents;
+ const isContents = current.kind === 'contents';
+ $('contents-page').hidden = !isContents; $('chapter-page').hidden = isContents;
  const main = $('book-main'); main.classList.remove('page-arrive'); void main.offsetWidth; main.classList.add('page-arrive');
- if (contents) {
+ if (isContents) {
   const list = $('chapter-list'); list.replaceChildren();
-  const startIndex = current.index * CONTENTS_PER_PAGE;
-  chapters.slice(startIndex, startIndex + CONTENTS_PER_PAGE).forEach((chapter, offset) => {
-   const link = node('a', undefined, 'chapter-card'); link.href = '#' + chapter.id;
-   const image = node('div'); image.innerHTML = art(chapter.art); const words = node('div');
-   words.append(node('small', 'CHAPTER ' + (startIndex + offset + 1)), node('h2', chapter.title), node('p', chapter.description), node('span', 'Open chapter →', 'open'));
-   link.append(image, words); list.append(link);
-  });
-  $('contents-position').textContent = 'Contents · ' + (current.index + 1) + ' of ' + Math.ceil(chapters.length / CONTENTS_PER_PAGE) + ' · Two chapters on each page';
-  $('book-note').textContent = 'Choose a chapter above, or turn to the next contents page.';
- } else {
-  const chapter = chapters[current.index];
-  $('chapter-number').textContent = 'CHAPTER ' + (current.index + 1) + ' OF ' + chapters.length;
-  $('chapter-title').textContent = chapter.title; $('chapter-description').textContent = chapter.description;
-  $('chapter-art').innerHTML = art(chapter.art);
-  if (chapter.view) openTool(chapter.view, chapter.title, chapter.privacy, false);
-  else {
-   const body = $('chapter-body'); body.replaceChildren(); const options = node('div', undefined, 'chapter-options');
-   for (const item of chapter.tools || chapter.links || []) {
-    const [title, description, destination] = item;
-    const option = node(chapter.tools ? 'button' : 'a', undefined, 'option-card');
-    option.append(node('strong', title + (chapter.tools ? ' →' : ' ↗')), node('span', description));
-    if (chapter.tools) { option.type = 'button'; option.addEventListener('click', () => openTool(destination, title, chapter.privacy, true)); }
-    else { option.href = destination; if (!destination.startsWith('mailto:')) { option.target = '_blank'; option.rel = 'noopener'; } }
-    options.append(option);
-   }
-   if (chapter.tools) { const more = node('a', undefined, 'option-card quiet-option'); more.href = 'index.html?view=rooms'; more.target = '_blank'; more.rel = 'noopener'; more.append(node('strong', 'Other original tools ↗'), node('span', 'Documents, sports, entertainment, and the remaining rooms.')); options.append(more); }
-   body.append(options);
+  for (const item of contents) {
+   const row = node('li');
+   const link = node('a', undefined, 'toc-link'); link.href = '#' + item.pageId;
+   const number = node('span', String(item.chapter), 'toc-chapter');
+   const title = node('span', item.title, 'toc-title');
+   const dots = node('span', undefined, 'toc-dots'); dots.setAttribute('aria-hidden', 'true');
+   link.append(number, title, dots, node('span', String(item.pageNumber), 'toc-page'));
+   link.setAttribute('aria-label', 'Chapter ' + item.chapter + ': ' + item.title + ', page ' + item.pageNumber);
+   const cover = node('a', item.coverTitle + ' · cover page ' + item.coverNumber, 'toc-cover'); cover.href = '#' + item.coverId;
+   row.append(link, cover); list.append(row);
   }
-  $('book-note').textContent = chapter.privacy || 'Choose a tool. Contents always brings you back.';
+  $('contents-position').textContent = 'Seven chapters · 14 pages';
+  $('book-note').textContent = 'Next opens page 1: the Cascadia cover.';
+ } else {
+  const page = chapters[current.index];
+  $('chapter-page').classList.toggle('truck-cover', !!page.cover);
+  $('chapter-number').textContent = 'CHAPTER ' + page.chapter + ' · PAGE ' + (current.index + 1) + ' OF ' + chapters.length;
+  $('chapter-title').textContent = page.title; $('chapter-description').textContent = page.description;
+  $('chapter-art').hidden = !!page.cover || !!page.gear;
+  $('chapter-art').innerHTML = art(page.art);
+  if (page.cover) renderCover(page);
+  else if (page.reels) renderReels();
+  else if (page.gear) renderGear();
+  else if (page.view) openTool(page.view, page.title, page.privacy, false);
+  $('book-note').textContent = current.index === chapters.length - 1 ? 'Final page · Thanks for keeping America moving.' : page.privacy || 'Page ' + (current.index + 1) + ' of 14 · Turn the page when you’re ready.';
  }
- $('turn-back').disabled = contents && current.index === 0;
- $('turn-next').disabled = !contents && current.index === chapters.length - 1;
+ $('turn-back').disabled = isContents;
+ $('turn-next').disabled = !isContents && current.index === chapters.length - 1;
 }
 $('turn-back').addEventListener('click', () => {
- if (current.kind === 'contents') changePage('contents-' + Math.max(1, current.index));
+ if (current.kind === 'contents') return;
  else changePage(current.index ? chapters[current.index - 1].id : 'contents');
 });
 $('turn-next').addEventListener('click', () => {
- if (current.kind === 'contents') changePage(current.index + 1 < Math.ceil(chapters.length / CONTENTS_PER_PAGE) ? 'contents-' + (current.index + 2) : chapters[0].id);
+ if (current.kind === 'contents') changePage(chapters[0].id);
  else if (current.index < chapters.length - 1) changePage(chapters[current.index + 1].id);
 });
 window.addEventListener('hashchange', () => { if (!opened) enterBook(); else { render(); (current.kind === 'contents' ? $('contents-title') : $('chapter-title')).focus({ preventScroll: true }); } });
