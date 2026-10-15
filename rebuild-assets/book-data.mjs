@@ -120,7 +120,7 @@ export const chapters = [
   {
     "id": "volvo",
     "title": "2027 Volvo VNL64T860",
-    "description": "Turn the page for Shop Gear & T-Shirts.",
+    "description": "Turn the page for Truck Repair Guides.",
     "cover": true,
     "chapter": 7,
     "image": "rebuild-assets/trucks/volvo-ai.webp",
@@ -129,18 +129,10 @@ export const chapters = [
     "generated": true
   },
   {
-    "id": "gear",
-    "title": "Shop Gear & T-Shirts",
-    "description": "Visit the official TruckFixHub store and shop our T-shirts.",
-    "chapter": 7,
-    "art": "gear",
-    "gear": true
-  },
-  {
     "id": "repair-help",
     "title": "Truck Repair Guides",
     "description": "Choose a topic. Read the guide, check its manufacturer sources, and prepare your questions.",
-    "chapter": 8,
+    "chapter": 7,
     "art": "parts",
     "guides": true,
     "privacy": "Free to read. No login required."
@@ -149,7 +141,7 @@ export const chapters = [
     "id": "find-a-shop",
     "title": "Find a Repair Shop",
     "description": "Search local listings or open a nationwide manufacturer service locator.",
-    "chapter": 9,
+    "chapter": 8,
     "art": "road",
     "resource": "truck-repair-shop-directory.html",
     "privacy": "Public directory. Call the shop to confirm service and availability."
@@ -158,7 +150,7 @@ export const chapters = [
     "id": "fuel-cost",
     "title": "Trip Fuel Cost Calculator",
     "description": "Enter your miles, fuel economy, and fuel price to estimate the trip.",
-    "chapter": 10,
+    "chapter": 9,
     "art": "truck",
     "resource": "trip-fuel-cost-calculator.html",
     "privacy": "No login required. Your calculation stays in your browser."
@@ -167,7 +159,7 @@ export const chapters = [
     "id": "casino",
     "title": "Casino",
     "description": "Take a break with your free-credit slot machine.",
-    "chapter": 11,
+    "chapter": 10,
     "art": "gear",
     "view": "casino",
     "privacy": "Free play only. No real-money wagering."
@@ -176,20 +168,26 @@ export const chapters = [
     "id": "sports",
     "title": "Sports Room",
     "description": "Relax with sports scores, highlights, and your sports room.",
-    "chapter": 12,
+    "chapter": 11,
     "art": "community",
     "view": "sports"
+  },
+  {
+    "id": "gear",
+    "title": "Shop Gear & T-Shirts",
+    "description": "Visit the official TruckFixHub store and shop our T-shirts.",
+    "chapter": 12,
+    "art": "gear",
+    "gear": true
   }
 ];
-export const contents = [
- ...chapters.filter(page => page.cover).map((page, index) => ({
-  chapter: index + 1, coverId: page.id, coverTitle: page.title, coverNumber: index * 2 + 1,
-  title: chapters[index * 2 + 1].title, pageId: chapters[index * 2 + 1].id, pageNumber: index * 2 + 2
- })),
- ...chapters.filter(page => !page.cover && page.chapter >= 8).map(page => ({
-  chapter: page.chapter, title: page.title, pageId: page.id, pageNumber: chapters.indexOf(page) + 1
- }))
-];
+export const contents = chapters.filter(page => !page.cover).map(page => {
+ const cover = chapters.find(candidate => candidate.cover && candidate.chapter === page.chapter);
+ return {
+  chapter: page.chapter, title: page.title, pageId: page.id, pageNumber: chapters.indexOf(page) + 1,
+  ...(cover ? { coverId: cover.id, coverTitle: cover.title, coverNumber: chapters.indexOf(cover) + 1 } : {})
+ };
+});
 export function readPage(hash) {
  const value = hash.replace(/^#/, '');
  const index = chapters.findIndex(page => page.id === value);

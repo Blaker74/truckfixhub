@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { chapters, contents, readPage, remainingSeconds, turnDirection } from '../rebuild-assets/book-data.mjs';
 
-test('nineteen pages preserve truck chapters, add public road tools, and end with Casino and Sports', () => {
+test('nineteen pages preserve truck chapters, add public road tools, and end with Casino, Sports and Shop Gear', () => {
  assert.deepEqual(chapters.map(page => page.id), [
   'cascadia','community','peterbilt','vins','international','call-notes','kenworth','customers',
-  'western-star','diesel-reel','mack','super-miller','volvo','gear','repair-help','find-a-shop','fuel-cost','casino','sports'
+  'western-star','diesel-reel','mack','super-miller','volvo','repair-help','find-a-shop','fuel-cost','casino','sports','gear'
  ]);
  assert.deepEqual(chapters.filter(page => page.view).map(page => page.view), ['forum','trucks','call-notes','customers','supermiller','casino','sports']);
- assert(chapters[9].reels); assert(chapters[13].gear);
+ assert(chapters[9].reels); assert(chapters.at(-1).gear);
 });
 test('contents maps every chapter including public tools to the correct pages', () => {
  assert.equal(contents.length, 12);
@@ -19,7 +19,7 @@ test('contents maps every chapter including public tools to the correct pages', 
   assert.equal(chapters[entry.coverNumber-1].id,entry.coverId);
   assert.equal(chapters[entry.pageNumber-1].id,entry.pageId);
  });
- assert.deepEqual(contents.slice(7).map(item=>[item.pageId,item.pageNumber]), [['repair-help',15],['find-a-shop',16],['fuel-cost',17],['casino',18],['sports',19]]);
+ assert.deepEqual(contents.slice(7).map(item=>[item.pageId,item.pageNumber]), [['find-a-shop',15],['fuel-cost',16],['casino',17],['sports',18],['gear',19]]);
  contents.forEach(item => assert.equal(chapters[item.pageNumber-1].id,item.pageId));
 });
 test('all seven covers use generated artwork with clear labels and preserved prompts', () => {

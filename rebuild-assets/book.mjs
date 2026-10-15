@@ -1,4 +1,4 @@
-import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=resources1';
+import { chapters, contents, readPage, remainingSeconds, turnDirection } from './book-data.mjs?v=final-order1';
 import { repairGuides, publicFiles, resourceDestination } from './road-resources.mjs?v=resources1';
 import { createBookMusic } from './book-music.mjs';
 const $ = id => document.getElementById(id);
