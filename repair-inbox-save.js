@@ -16,28 +16,25 @@
       const auth=await sb.auth.getSession();
       if(auth.error) throw auth.error;
       const session=auth.data&&auth.data.session;
-      if(!session||!session.user||!session.access_token) throw new Error('Please sign in before creating a private Repair Job');
-      const verified=await sb.auth.getUser(session.access_token);
-      if(verified.error) throw verified.error;
-      const user=verified.data&&verified.data.user;
-      if(!user||!user.id) throw new Error('Your secure session could not be verified. Please sign in again.');
+      if(!session||!session.user) throw new Error('Please sign in before creating a private Repair Job');
       if(msg) msg.textContent='Saving your new Repair Job…';
-      const result=await sb.from('tfh_repair_jobs').insert({
-        owner_id:user.id,
-        status:'reported',
-        unit_number:p.unit||null,
-        vin:p.vin||null,
-        engine:p.engine||null,
-        engine_serial:p.esn||null,
-        mileage:p.mileage?Number(String(p.mileage).replace(/[^0-9]/g,'')):null,
-        fault_code:p.code||null,
-        system_problem:p.system||null,
-        symptoms:p.symptoms||null,
-        safety_status:p.safety||null
-      }).select('id,job_number').single();
+      const mileage=p.mileage?Number(String(p.mileage).replace(/[^0-9]/g,'')):null;
+      const result=await sb.rpc('tfh_create_repair_job',{
+        p_unit_number:p.unit||null,
+        p_vin:p.vin||null,
+        p_engine:p.engine||null,
+        p_engine_serial:p.esn||null,
+        p_mileage:Number.isFinite(mileage)?mileage:null,
+        p_fault_code:p.code||null,
+        p_system_problem:p.system||null,
+        p_symptoms:p.symptoms||null,
+        p_safety_status:p.safety||null
+      });
       if(result.error) throw result.error;
+      const saved=Array.isArray(result.data)?result.data[0]:result.data;
+      if(!saved||!saved.id) throw new Error('Repair Job save did not return a record');
       sessionStorage.removeItem('tfhNewRepair');
-      location.replace('repair-inbox.html?saved='+encodeURIComponent(result.data.job_number));
+      location.replace('repair-inbox.html?saved='+encodeURIComponent(saved.job_number));
     }catch(e){
       if(msg) msg.textContent='Repair Job was not saved: '+(e.message||'Please try again.');
     }
