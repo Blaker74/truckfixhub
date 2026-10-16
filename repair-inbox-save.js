@@ -12,13 +12,16 @@
       const url=(text.match(/SUPABASE_URL='([^']+)'/)||[])[1];
       const key=(text.match(/SUPABASE_KEY='([^']+)'/)||[])[1];
       if(!url||!key) throw new Error('Repair connection unavailable');
-      const sb=window.supabase.createClient(url,key);
-      const auth=await sb.auth.getUser();
-      const user=auth.data&&auth.data.user;
-      if(!user) throw new Error('Please sign in before creating a private Repair Job');
+      const authClient=window.supabase.createClient(url,key);
+      const sessionResult=await authClient.auth.getSession();
+      const session=sessionResult.data&&sessionResult.data.session;
+      if(!session||!session.user||!session.access_token) throw new Error('Please sign in before creating a private Repair Job');
+      const user=session.user;
+      const sb=window.supabase.createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+session.access_token}}});
       if(msg) msg.textContent='Saving your new Repair Job…';
       const result=await sb.from('tfh_repair_jobs').insert({
         owner_id:user.id,
+        job_number:Date.now(),
         status:'reported',
         unit_number:p.unit||null,
         vin:p.vin||null,
