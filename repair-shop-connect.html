@@ -1,126 +1,14 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow,noarchive">
-<title>Find Repair Shop | TruckFixHub</title>
-<meta name="theme-color" content="#07182e">
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#f4f7fb;color:#102a49;font:16px/1.45 system-ui,-apple-system,sans-serif}
-main{max-width:820px;margin:auto;padding:18px 16px 100px}
-.top a{font-weight:900;color:#123f72;text-decoration:none}
-.hero,.card{background:#fff;border:1px solid #c7d2df;border-radius:20px;padding:20px;margin:14px 0}
-.hero{background:linear-gradient(145deg,#07182e,#123f72);color:#fff}
-.hero h1{font-size:clamp(32px,8vw,48px);line-height:1.05;margin:.25em 0}
-.hero p{color:#e5edf5}
-.details{white-space:pre-wrap;background:#f3f7fb;border-radius:14px;padding:15px;margin:12px 0}
-.btn{display:block;width:100%;border:0;background:#0b3768;color:#fff;text-decoration:none;text-align:center;font:inherit;font-weight:900;padding:14px;border-radius:13px;margin:10px 0}
-.btn.alt{background:#fff;color:#0b3768;border:2px solid #0b3768}
-.hint{color:#60758b;font-size:14px}
-.nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:#07182ef5;padding:7px 3px calc(7px + env(safe-area-inset-bottom))}
-.nav a{color:#fff;text-decoration:none;text-align:center;font-size:11px;font-weight:850}
-.nav b{display:block;font-size:20px}
-</style>
-</head>
-<body>
-<main>
-<div class="top"><a href="repair-inbox.html">← Repair Inbox</a></div>
-<section class="hero">
-<div>TRUCKFIXHUB</div>
-<h1>🔧 Find Repair Help</h1>
-<p>Use your location to find nearby heavy-duty truck repair, then send the shop the repair information you already entered.</p>
-</section>
-<section class="card">
-<h2 id="title">Loading repair job…</h2>
-<div id="details" class="details">Please wait.</div>
-<button id="find" class="btn">📍 FIND NEARBY TRUCK REPAIR</button>
-<button id="share" class="btn alt">📲 SHARE REPAIR JOB WITH SHOP</button>
-<p class="hint">TruckFixHub opens nearby repair results using your device location. You choose the shop; TruckFixHub does not claim or guarantee shop availability, qualifications, pricing, or repairs.</p>
-</section>
-</main>
-<nav class="nav">
-<a href="index.html"><b>⌂</b>Home</a>
-<a href="fix-my-truck.html"><b>🚨</b>Repair</a>
-<a href="repair-inbox.html"><b>🔔</b>Inbox</a>
-<a href="parts-list.html"><b>📦</b>Parts</a>
-<a href="my-garage.html"><b>🚛</b>Garage</a>
-</nav>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const U='https://bncqcdlzmawlmfworalq.supabase.co';
-const K='sb_publishable_yz-vrCD_has1enE2Zh5qyQ_IAz7gk80';
-const sb=supabase.createClient(U,K);
-const id=new URLSearchParams(location.search).get('job');
-let job=null;
-const e=s=>String(s??'').trim();
-
-function text(){
- if(!job)return 'TruckFixHub Repair Job';
- return `TRUCKFIXHUB REPAIR JOB #${e(job.job_number)}
-Unit: ${e(job.unit_number)||'Not entered'}
-VIN: ${e(job.vin)||'Not entered'}
-Engine: ${e(job.engine)||'Not entered'}
-Engine Serial: ${e(job.engine_serial)||'Not entered'}
-Mileage: ${e(job.mileage)||'Not entered'}
-Fault Code: ${e(job.fault_code)||'Not entered'}
-System / Problem: ${e(job.system_problem)||'Not entered'}
-Symptoms: ${e(job.symptoms)||'Not entered'}
-Safety Status: ${e(job.safety_status)||'Not entered'}
-
-Sent from TruckFixHub.`;
-}
-
-async function load(){
- if(!id){
-   document.getElementById('details').textContent='No repair job was selected.';
-   return;
- }
- const {data,error}=await sb.from('tfh_repair_jobs')
-   .select('id,job_number,unit_number,vin,engine,engine_serial,mileage,fault_code,system_problem,symptoms,safety_status')
-   .eq('id',id).single();
- if(error||!data){
-   document.getElementById('details').textContent='Could not load this repair job. '+(error?.message||'');
-   return;
- }
- job=data;
- document.getElementById('title').textContent='Job #'+e(job.job_number)+(job.unit_number?' • Unit '+e(job.unit_number):'');
- document.getElementById('details').textContent=text();
-}
-
-document.getElementById('find').onclick=()=>{
- const openMap=q=>location.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
- if(!navigator.geolocation){
-   openMap('heavy duty truck repair near me');
-   return;
- }
- navigator.geolocation.getCurrentPosition(
-   p=>openMap('heavy duty truck repair near '+p.coords.latitude+','+p.coords.longitude),
-   ()=>openMap('heavy duty truck repair near me'),
-   {enableHighAccuracy:true,timeout:8000,maximumAge:300000}
- );
-};
-
-document.getElementById('share').onclick=async()=>{
- const t=text();
- if(navigator.share){
-   try{
-     await navigator.share({title:'TruckFixHub Repair Job'+(job?' #'+job.job_number:''),text:t});
-     return;
-   }catch(x){
-     if(x.name==='AbortError')return;
-   }
- }
- try{
-   await navigator.clipboard.writeText(t);
-   alert('Repair job copied. Paste it into a text or email to the shop.');
- }catch(x){
-   location.href='mailto:?subject='+encodeURIComponent('TruckFixHub Repair Job')+'&body='+encodeURIComponent(t);
- }
-};
-
-load();
-</script>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow,noarchive"><title>Find Repair Shop | TruckFixHub</title><meta name="theme-color" content="#07182e">
+<style>*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#102a49;font:16px/1.45 system-ui,-apple-system,sans-serif}main{max-width:820px;margin:auto;padding:18px 16px 100px}.top a{font-weight:900;color:#123f72;text-decoration:none}.hero,.card{background:#fff;border:1px solid #c7d2df;border-radius:20px;padding:20px;margin:14px 0}.hero{background:linear-gradient(145deg,#07182e,#123f72);color:#fff}.hero h1{font-size:clamp(32px,8vw,48px);line-height:1.05;margin:.25em 0}.hero p{color:#e5edf5}.details{white-space:pre-wrap;background:#f3f7fb;border-radius:14px;padding:15px;margin:12px 0}.btn{display:block;width:100%;border:0;background:#0b3768;color:#fff;text-decoration:none;text-align:center;font:inherit;font-weight:900;padding:14px;border-radius:13px;margin:10px 0}.btn.alt{background:#fff;color:#0b3768;border:2px solid #0b3768}.btn.community{background:#e8f0f8;color:#0b3768;border:2px solid #9bb5ce}.hint{color:#60758b;font-size:14px}.nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,1fr);background:#07182ef5;padding:7px 3px calc(7px + env(safe-area-inset-bottom))}.nav a{color:#fff;text-decoration:none;text-align:center;font-size:11px;font-weight:850}.nav b{display:block;font-size:20px}</style></head><body>
+<main><div class="top"><a href="repair-inbox.html">← Repair Inbox</a></div><section class="hero"><div>TRUCKFIXHUB</div><h1>🔧 Find Repair Help</h1><p>Find a shop, share your repair information, or ask the TruckFixHub community for experience with the problem.</p></section><section class="card"><h2 id="title">Loading repair job…</h2><div id="details" class="details">Please wait.</div><button id="find" class="btn">📍 FIND NEARBY TRUCK REPAIR</button><button id="share" class="btn alt">📲 SHARE REPAIR JOB WITH SHOP</button><button id="community" class="btn community">👥 ASK THE COMMUNITY</button><p class="hint">Community posts never include your VIN, engine serial number, mileage, location, or other private repair details. Review the post before publishing it.</p><p class="hint">TruckFixHub opens nearby repair results using your device location. You choose the shop; TruckFixHub does not claim or guarantee shop availability, qualifications, pricing, or repairs.</p></section></main>
+<nav class="nav"><a href="index.html"><b>⌂</b>Home</a><a href="fix-my-truck.html"><b>🚨</b>Repair</a><a href="community.html"><b>👥</b>Community</a><a href="repair-inbox.html"><b>🔔</b>Inbox</a><a href="my-garage.html"><b>🚛</b>Garage</a></nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+const U='https://bncqcdlzmawlmfworalq.supabase.co',K='sb_publishable_yz-vrCD_has1enE2Zh5qyQ_IAz7gk80',sb=supabase.createClient(U,K),id=new URLSearchParams(location.search).get('job');let job=null;const e=s=>String(s??'').trim();
+function text(){if(!job)return'TruckFixHub Repair Job';return `TRUCKFIXHUB REPAIR JOB #${e(job.job_number)}\nUnit: ${e(job.unit_number)||'Not entered'}\nVIN: ${e(job.vin)||'Not entered'}\nEngine: ${e(job.engine)||'Not entered'}\nEngine Serial: ${e(job.engine_serial)||'Not entered'}\nMileage: ${e(job.mileage)||'Not entered'}\nFault Code: ${e(job.fault_code)||'Not entered'}\nSystem / Problem: ${e(job.system_problem)||'Not entered'}\nSymptoms: ${e(job.symptoms)||'Not entered'}\nSafety Status: ${e(job.safety_status)||'Not entered'}\n\nSent from TruckFixHub.`}
+function communityDraft(){if(!job)return'';let a=['Looking for help with a truck repair problem.'];if(e(job.engine))a.push('Engine: '+e(job.engine));if(e(job.fault_code))a.push('Fault code: '+e(job.fault_code));if(e(job.system_problem))a.push('System / problem: '+e(job.system_problem));if(e(job.symptoms))a.push('Symptoms: '+e(job.symptoms));a.push('Has anyone dealt with this before? What fixed it?');return a.join('\n')}
+async function load(){if(!id){document.getElementById('details').textContent='No repair job was selected.';return}const{data,error}=await sb.from('tfh_repair_jobs').select('id,job_number,unit_number,vin,engine,engine_serial,mileage,fault_code,system_problem,symptoms,safety_status').eq('id',id).single();if(error||!data){document.getElementById('details').textContent='Could not load this repair job. '+(error?.message||'');return}job=data;document.getElementById('title').textContent='Job #'+e(job.job_number)+(job.unit_number?' • Unit '+e(job.unit_number):'');document.getElementById('details').textContent=text()}
+document.getElementById('find').onclick=()=>{const openMap=q=>location.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);if(!navigator.geolocation){openMap('heavy duty truck repair near me');return}navigator.geolocation.getCurrentPosition(p=>openMap('heavy duty truck repair near '+p.coords.latitude+','+p.coords.longitude),()=>openMap('heavy duty truck repair near me'),{enableHighAccuracy:true,timeout:8000,maximumAge:300000})};
+document.getElementById('share').onclick=async()=>{const t=text();if(navigator.share){try{await navigator.share({title:'TruckFixHub Repair Job'+(job?' #'+job.job_number:''),text:t});return}catch(x){if(x.name==='AbortError')return}}try{await navigator.clipboard.writeText(t);alert('Repair job copied. Paste it into a text or email to the shop.')}catch(x){location.href='mailto:?subject='+encodeURIComponent('TruckFixHub Repair Job')+'&body='+encodeURIComponent(t)}};
+document.getElementById('community').onclick=()=>{if(!job){alert('Repair job is still loading.');return}sessionStorage.setItem('tfhCommunityDraft',JSON.stringify({body:communityDraft(),repair_job_id:job.id,category:(e(job.fault_code)||/emission|aftertreatment|dpf|scr|def|nox/i.test(e(job.system_problem)+' '+e(job.symptoms)))?'Engine & Emissions':'General Trucking'}));location.href='community.html?fromRepair=1'};
+load();</script></body></html>
