@@ -1,0 +1,17 @@
+/* TruckFixHub Parts Pattern Intelligence v1
+   Models the practical knowledge parts professionals gain from repeated sales patterns.
+   A commonly sold part is a diagnostic clue, NEVER proof that the part failed.
+*/
+(function(){'use strict';
+const patterns=[];
+function norm(v){return String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+function signature(e={}){return norm([e.year,e.make,e.model,e.engine,e.componentModel,e.systemProblem,e.symptom,e.faultCode,e.spn,e.fmi].filter(Boolean).join(' '))}
+function add(p){if(!p||!p.partNumber||!p.context)return false;patterns.push({...p,id:p.id||`pp-${patterns.length+1}`,partNumber:String(p.partNumber),context:norm(p.context),salesCount:Number(p.salesCount||0),verifiedFixCount:Number(p.verifiedFixCount||0),returnCount:Number(p.returnCount||0),source:p.source||'parts-pattern',safetyCritical:!!p.safetyCritical});return true}
+function scorePattern(p,e={}){const s=signature(e);let score=0;norm(p.context).split(' ').filter(x=>x.length>2).forEach(k=>{if(s.includes(k))score+=2});score+=Math.min(12,Math.log10(Math.max(1,p.salesCount))*4);if(p.verifiedFixCount)score+=Math.min(25,Math.log10(1+p.verifiedFixCount)*10);if(p.returnCount&&p.salesCount)score-=Math.min(15,(p.returnCount/p.salesCount)*50);return Math.round(score*10)/10}
+function rank(e={}){return patterns.map(p=>({...p,score:scorePattern(p,e),salesSignal:p.salesCount>0,verifiedOutcomeSignal:p.verifiedFixCount>0,diagnosisConfirmed:false})).filter(p=>p.score>0).sort((a,b)=>b.score-a.score)}
+function confidence(p){if(!p)return'none';if(p.verifiedFixCount>=25&&p.score>=25)return'strong-pattern-not-diagnosis';if(p.verifiedFixCount>=5||p.salesCount>=50)return'moderate-pattern-not-diagnosis';return'weak-pattern-not-diagnosis'}
+function nextEvidence(p,e={}){const q=[];if(!e.componentModel&&!e.engine)q.push('Verify exact engine/component model and serial/specification.');if(!e.faultCode&&!e.spn)q.push('Capture active/inactive fault codes if the system provides them.');q.push('Perform the manufacturer-recommended test that separates this candidate from wiring, supply, control and mechanical causes.');if(p&&p.safetyCritical)q.push('Safety-critical system: do not authorize replacement from sales frequency; require direct diagnostic evidence and current service information.');return q}
+function explain(p,e={}){return{partNumber:p.partNumber,score:p.score,confidence:confidence(p),reason:`This part has appeared repeatedly in similar parts/repair patterns (${p.salesCount} sales-pattern observations; ${p.verifiedFixCount} verified-fix observations).`,warning:'Frequency is a prior probability, not a diagnosis. High sales can reflect maintenance intervals, stocking practices, campaigns, availability, bundled repairs, misdiagnosis or repeat replacement.',nextEvidence:nextEvidence(p,e)}}
+function analyze(e={}){const ranked=rank(e);return{context:signature(e),candidates:ranked.slice(0,10).map(p=>explain(p,e)),policy:'Use parts-sales frequency to prioritize questions and tests, never to skip diagnosis. Verified repair outcomes carry more weight than sales frequency; OEM/manufacturer test evidence outranks both.'}}
+window.TFHPartsPatternIntelligence={add,rank,analyze,patterns,policy:'Commonly sold does not mean commonly failed. Sales patterns become useful diagnostic priors only when tied to application, complaint, evidence and verified repair outcomes.'};
+})();
