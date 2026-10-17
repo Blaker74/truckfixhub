@@ -1,0 +1,12 @@
+/* TruckFixHub Research Ingestion Policy v1
+   Discovery is NOT verification. All machine-collected knowledge enters quarantine first.
+*/
+(function(){'use strict';
+const STATUS={DISCOVERED:'discovered',QUARANTINED:'quarantined',REVIEW:'needs-review',VERIFIED:'verified',CONFLICT:'conflicting',REJECTED:'rejected',SUPERSEDED:'superseded'};
+const TIERS={OEM:1,MANUFACTURER:1,REGULATOR:1,AUTHORIZED_TECHNICAL:2,DISTRIBUTOR:3,PROFESSIONAL_COMMUNITY:4,FORUM_SOCIAL:5,UNKNOWN:6};
+const RULES={respectRobots:true,respectTerms:true,respectRateLimits:true,noAuthBypass:true,noPaywallBypass:true,noPrivateData:true,noSecretCollection:true,noWholesaleCopyrightReplication:true,storeProvenance:true,storeRetrievalDate:true,quarantineByDefault:true};
+function quarantine(item={}){return{...item,status:STATUS.QUARANTINED,sourceUrl:item.sourceUrl||'',publisher:item.publisher||'',sourceTier:Number(item.sourceTier||TIERS.UNKNOWN),documentId:item.documentId||'',documentDate:item.documentDate||'',retrievedAt:item.retrievedAt||new Date().toISOString(),claimType:item.claimType||'unknown',claim:item.claim||'',application:item.application||{},constraints:item.constraints||[],evidence:[]}}
+function audit(x={}){const reasons=[],warnings=[];if(!x.sourceUrl)reasons.push('missing source URL');if(!x.publisher)reasons.push('missing publisher');if(!x.claim)reasons.push('missing factual claim');if(!x.retrievedAt)reasons.push('missing retrieval date');if(x.sourceTier>3)warnings.push('low-authority source cannot establish verified technical truth alone');if(!x.documentDate)warnings.push('source publication/revision date unknown');if(['interchange','supersession','application','torque','pressure','dimension','calibration','safety'].includes(x.claimType)&&x.sourceTier>2)warnings.push('high-consequence claim requires manufacturer/OEM/regulatory confirmation');if(x.conflicts&&x.conflicts.length)reasons.push('unresolved conflicting evidence');return{pass:reasons.length===0&&x.sourceTier<=2,reasons,warnings,recommendedStatus:reasons.length?STATUS.REVIEW:(x.sourceTier<=2?STATUS.VERIFIED:STATUS.REVIEW)}}
+function promote(x={}){const a=audit(x);return{...x,audit:a,status:a.recommendedStatus,verifiedAt:a.pass?new Date().toISOString():null}}
+window.TFHResearchIngestion={STATUS,TIERS,RULES,quarantine,audit,promote,policy:'Crawlers discover. They never decide truth. Nothing enters verified TruckFixHub intelligence without provenance, authority checks, conflict checks and audit.'};
+})();
