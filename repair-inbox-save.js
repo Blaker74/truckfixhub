@@ -37,8 +37,9 @@
         const context=await sb.from('tfh_repair_jobs').update({recent_context:p.recent||null,diagnostic_route:p.diagnosticRoute||null}).eq('id',saved.id).eq('owner_id',session.user.id).select('id').single();
         if(context.error) throw context.error;
       }
+      sessionStorage.setItem('tfhDiagnosticPreview',JSON.stringify({id:saved.id,job_number:saved.job_number,job:{engine:p.engine||null,fault_code:p.code||null,system_problem:p.system||null,symptoms:p.symptoms||null,recent_context:p.recent||null,safety_status:p.safety||null,diagnostic_route:p.diagnosticRoute||null}}));
       sessionStorage.removeItem('tfhNewRepair');
-      location.replace('repair-inbox.html?saved='+encodeURIComponent(saved.job_number));
+      location.replace('repair-diagnostic.html?job='+encodeURIComponent(saved.id));
     }catch(e){
       if(msg) msg.textContent='Repair Job was not saved: '+(e.message||'Please try again.');
     }
