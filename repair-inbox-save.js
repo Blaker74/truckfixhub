@@ -33,6 +33,10 @@
       if(result.error) throw result.error;
       const saved=Array.isArray(result.data)?result.data[0]:result.data;
       if(!saved||!saved.id) throw new Error('Repair Job save did not return a record');
+      if(p.recent||p.diagnosticRoute){
+        const context=await sb.from('tfh_repair_jobs').update({recent_context:p.recent||null,diagnostic_route:p.diagnosticRoute||null}).eq('id',saved.id).eq('owner_id',session.user.id).select('id').single();
+        if(context.error) throw context.error;
+      }
       sessionStorage.removeItem('tfhNewRepair');
       location.replace('repair-inbox.html?saved='+encodeURIComponent(saved.job_number));
     }catch(e){
