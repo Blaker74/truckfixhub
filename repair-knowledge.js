@@ -1,0 +1,13 @@
+/* TruckFixHub Knowledge Registry v1
+   Source registry only. It does not copy proprietary service manuals or treat search results as diagnoses. */
+(function(){'use strict';
+const tiers={1:'OEM / authoritative technical source',2:'TruckFixHub verified outcome',3:'reputable industry technical source',4:'community clue only'};
+const sources=[
+{id:'cummins-qsol',name:'Cummins QuickServe Online',tier:1,systems:['engine','fuel','electrical','J1939','aftertreatment'],use:['service information','fault-code troubleshooting','wiring diagrams','service bulletins','engine-specific parts/service data'],url:'https://quickserve.cummins.com/'},
+{id:'cummins-tech',name:'Cummins Technical Information',tier:1,systems:['engine','fuel','aftertreatment'],use:['technical information','manual lookup','engine-specific service references'],url:'https://www.cummins.com/en-na/engines/technical-information'},
+{id:'bendix-support',name:'Bendix Services & Support',tier:1,systems:['air brake','ABS','compressor','safety'],use:['technical support','diagnostic tools','technical documentation','brake training'],url:'https://www.bendix.com/en/services-and-support/'},
+{id:'zf-cv',name:'ZF / WABCO Commercial Vehicle Literature',tier:1,systems:['air brake','ABS','EBS','ECU','J1939','steering','ADAS'],use:['maintenance manuals','diagnostics','technical publications','ABS tests','air-system guides'],url:'https://www.zf.com/products/en/cv/emea/footer/downloads/downloads.html'}
+];
+const rules={hierarchy:['current physical evidence','applicable OEM procedure','TruckFixHub verified outcomes','TruckFixHub diagnostic knowledge','reputable industry technical information','community/internet experience','unknown/unverified claims'],never:['convert popularity into proof','recommend parts solely from a fault code','allow learned patterns to override safety','represent inaccessible or unreviewed material as verified','copy restricted proprietary service content'],require:['retain source provenance','record source type and applicability','separate hypothesis from confirmed diagnosis','ask for more evidence when support is weak','use current OEM procedure for safety-critical or configuration-specific work']};
+function relevant(job){const t=[job.engine,job.system_problem,job.symptoms,job.fault_code].filter(Boolean).join(' ').toLowerCase();return sources.map(s=>({...s,match:s.systems.reduce((n,x)=>n+(t.includes(x.toLowerCase())?1:0),0)})).sort((a,b)=>b.match-a.match||a.tier-b.tier)}
+window.TFHKnowledge={tiers,sources,rules,relevant};})();
