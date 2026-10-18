@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "name": "TruckFixHub 24/7 Knowledge Factory Control Policy",
+  "mode": "bounded_autonomy",
+  "principles": {
+    "raw_evidence_is_trusted": false,
+    "worker_self_promotion_allowed": false,
+    "human_control_for_security_sensitive_changes": true,
+    "optimize_for": "verified_knowledge_per_cost"
+  },
+  "scheduler": {
+    "heartbeat_expected_minutes": 5,
+    "empty_queue_behavior": "sleep",
+    "stale_lease_action": "requeue_or_block_with_audit_trail"
+  },
+  "dispatch": {
+    "max_new_collection_jobs_per_cycle": 5,
+    "priorities": [
+      "expired_or_stale_work",
+      "existing_evidence_audit",
+      "corroboration_backlog",
+      "user_generated_knowledge_gaps",
+      "stale_verified_knowledge_recheck",
+      "approved_regulatory_or_industry_updates",
+      "exploratory_research"
+    ],
+    "backpressure": {
+      "enabled": true,
+      "on_audit_backlog_pressure": "reduce_collection",
+      "on_corroboration_backlog_pressure": "reduce_collection",
+      "on_budget_pressure": "pause_nonessential_collection"
+    }
+  },
+  "workers": {
+    "default_max_concurrency_per_worker_kind": 2,
+    "max_attempts": 3,
+    "retry_strategy": "exponential_backoff",
+    "require_approved_source_policy": true,
+    "new_evidence_status": "quarantined",
+    "new_evidence_verified": false,
+    "on_retry_exhausted": "blocked"
+  },
+  "audit": {
+    "required_before_learning_or_promotion": true,
+    "audit_pass_equals_verified": false,
+    "allowed_outcomes": ["reject", "needs_more_evidence", "pass_to_claim_layer"]
+  },
+  "corroboration": {
+    "required_for_claim_promotion": true,
+    "insufficient_support_action": "create_targeted_corroboration_mission",
+    "preserve_evidence_lineage": true,
+    "verification_standard_may_drop_for_throughput": false
+  },
+  "panta": {
+    "prefer_verified_intelligence_for_truck_facts": true,
+    "raw_evidence_may_become_trusted_silently": false,
+    "unsupported_question_action": "record_bounded_knowledge_gap"
+  },
+  "safety": {
+    "allow_authentication_weakening": false,
+    "allow_secret_exposure": false,
+    "allow_unapproved_source_broadening": false,
+    "allow_unbounded_retries": false,
+    "allow_destructive_autonomous_changes": false
+  },
+  "health": {
+    "green": "normal_bounded_dispatch",
+    "yellow": "constrain_collection_and_clear_downstream_backlog",
+    "red": "pause_affected_path_and_request_review",
+    "required_metrics": [
+      "heartbeat_age",
+      "queued_executions",
+      "active_executions",
+      "stale_leases",
+      "completed_executions",
+      "failed_executions",
+      "blocked_executions",
+      "quarantined_evidence",
+      "audit_backlog",
+      "corroboration_backlog",
+      "verified_promotions",
+      "duplicate_work_prevented",
+      "active_workers",
+      "paused_workers",
+      "source_failures",
+      "estimated_daily_cost"
+    ]
+  }
+}
