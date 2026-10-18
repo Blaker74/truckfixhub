@@ -1,0 +1,62 @@
+name: Supabase Edge Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      function_name:
+        description: Edge Function directory name under supabase/functions
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-edge-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate requested function exists
+        env:
+          FUNCTION_NAME: ${{ inputs.function_name }}
+        run: |
+          set -euo pipefail
+          case "$FUNCTION_NAME" in
+            ''|*'/'*|*'..'*) echo 'Invalid function name'; exit 1 ;;
+          esac
+          test -f "supabase/functions/$FUNCTION_NAME/index.ts"
+      - name: Reject obvious committed secrets
+        run: |
+          set -euo pipefail
+          if grep -RIE '(service[_-]?role|access[_-]?token|api[_-]?key)[[:space:]]*[:=][[:space:]]*["'"'][A-Za-z0-9_-]{20,}' supabase/functions; then
+            echo 'Possible hardcoded secret detected.'
+            exit 1
+          fi
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Deploy selected Edge Function
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          FUNCTION_NAME: ${{ inputs.function_name }}
+        run: |
+          set -euo pipefail
+          test -n "$SUPABASE_ACCESS_TOKEN"
+          test -n "$SUPABASE_PROJECT_REF"
+          supabase functions deploy "$FUNCTION_NAME" --use-api --project-ref "$SUPABASE_PROJECT_REF"
