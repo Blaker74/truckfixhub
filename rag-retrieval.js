@@ -3,7 +3,7 @@ const STOP=new Set('a an and are as at be but by for from had has have he her hi
 const norm=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const terms=s=>norm(s).split(/\s+/).filter(x=>x.length>1&&!STOP.has(x));
 const uniq=a=>[...new Set(a)];
-const PHRASES=['no start','crank no start','slow crank','no crank','loss of power','low power','5 mph','parked regen','wont regen','will not regen','air pressure','air leak','losing air','nox sensor','def quality','scr efficiency','fault code','voltage drop','wheel speed sensor','abs light','coolant loss','overheat','fuel pressure','rail pressure','no communication','data link','freightliner','mid','pid','sid','fmi'];
+const PHRASES=['no start','crank no start','slow crank','no crank','loss of power','low power','5 mph','parked regen','wont regen','will not regen','air pressure','air leak','losing air','nox sensor','def quality','scr efficiency','fault code','voltage drop','wheel speed sensor','abs light','coolant loss','overheat','fuel pressure','rail pressure','no communication','data link','freightliner','mid','pid','sid','fmi','dd13','detroit','mcm','cpc','acm','soot','injector','misfire'];
 function exactTokens(s){return new Set(terms(s))}
 function diagnosticPhrases(s){const n=norm(s);return PHRASES.filter(p=>n.includes(norm(p)))}
 function score(doc,q){
@@ -18,7 +18,7 @@ function score(doc,q){
   return {score:n+specificity,coverage,matched,total:qt.length,phraseHits:qPhrases.filter(p=>all.includes(norm(p))).length};
 }
 async function load(){
-  const files=['rag-knowledge.json','panta-freightliner-legacy-code-reference.json'];
+  const files=['rag-knowledge.json','panta-freightliner-legacy-code-reference.json','panta-dd13-2017-2020-fault-reference.json'];
   const results=await Promise.all(files.map(async f=>{try{const r=await fetch(f,{cache:'no-cache'});if(!r.ok)return[];const db=await r.json();return Array.isArray(db.documents)?db.documents:[]}catch(_e){return[]}}));
   const documents=results.flat();if(!documents.length)throw new Error('Knowledge index unavailable');return {documents};
 }
