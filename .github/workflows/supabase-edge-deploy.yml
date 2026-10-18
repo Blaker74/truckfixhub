@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Validate requested function exists
         env:
           FUNCTION_NAME: ${{ inputs.function_name }}
@@ -43,6 +45,8 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -55,4 +59,4 @@ jobs:
           set -euo pipefail
           test -n "$SUPABASE_ACCESS_TOKEN"
           test -n "$SUPABASE_PROJECT_REF"
-          supabase functions deploy "$FUNCTION_NAME" --project-ref "$SUPABASE_PROJECT_REF"
+          supabase functions deploy "$FUNCTION_NAME" --use-api --project-ref "$SUPABASE_PROJECT_REF"
