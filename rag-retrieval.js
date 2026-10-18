@@ -3,7 +3,7 @@ const STOP=new Set('a an and are as at be but by for from had has have he her hi
 const norm=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const terms=s=>norm(s).split(/\s+/).filter(x=>x.length>1&&!STOP.has(x));
 const uniq=a=>[...new Set(a)];
-const PHRASES=['no start','crank no start','slow crank','no crank','loss of power','low power','5 mph','parked regen','wont regen','will not regen','air pressure','air leak','losing air','nox sensor','def quality','scr efficiency','fault code','voltage drop','wheel speed sensor','abs light','coolant loss','overheat','fuel pressure','rail pressure','no communication','data link'];
+const PHRASES=['no start','crank no start','slow crank','no crank','loss of power','low power','5 mph','parked regen','wont regen','will not regen','air pressure','air leak','losing air','nox sensor','def quality','scr efficiency','fault code','voltage drop','wheel speed sensor','abs light','coolant loss','overheat','fuel pressure','rail pressure','no communication','data link','freightliner','mid','pid','sid','fmi'];
 function exactTokens(s){return new Set(terms(s))}
 function diagnosticPhrases(s){const n=norm(s);return PHRASES.filter(p=>n.includes(norm(p)))}
 function score(doc,q){
@@ -17,7 +17,11 @@ function score(doc,q){
   const specificity=(doc.summary||'').length>220?2:0;
   return {score:n+specificity,coverage,matched,total:qt.length,phraseHits:qPhrases.filter(p=>all.includes(norm(p))).length};
 }
-async function load(){const r=await fetch('rag-knowledge.json',{cache:'no-cache'});if(!r.ok)throw new Error('Knowledge index unavailable');const db=await r.json();if(!db||!Array.isArray(db.documents))throw new Error('Knowledge index invalid');return db}
+async function load(){
+  const files=['rag-knowledge.json','panta-freightliner-legacy-code-reference.json'];
+  const results=await Promise.all(files.map(async f=>{try{const r=await fetch(f,{cache:'no-cache'});if(!r.ok)return[];const db=await r.json();return Array.isArray(db.documents)?db.documents:[]}catch(_e){return[]}}));
+  const documents=results.flat();if(!documents.length)throw new Error('Knowledge index unavailable');return {documents};
+}
 async function retrieve(q,limit=4){
   const db=await load();
   return db.documents.map(d=>{const s=score(d,q);return {...d,_score:s.score,_coverage:s.coverage,_matched:s.matched,_queryTerms:s.total,_phraseHits:s.phraseHits}})
