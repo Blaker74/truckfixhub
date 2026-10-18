@@ -1,0 +1,64 @@
+openapi: 3.1.0
+info:
+  title: TruckFixHub Panta Bridge
+  version: 1.0.0
+  description: Ask TruckFixHub Panta for trucking knowledge. Answers may include retrieved knowledge counts; always check source links and verification status before relying on technical guidance.
+servers:
+  - url: https://bncqcdlzmawlmfworalq.supabase.co/functions/v1
+paths:
+  /tfh-panta-bridge:
+    post:
+      operationId: askTruckFixHubPanta
+      summary: Ask TruckFixHub Panta
+      description: Sends a trucking question to TruckFixHub Panta and returns its answer and retrieval metadata. Do not treat an answer as verified if it does not include source evidence.
+      security:
+        - PantaBridgeKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+                  minLength: 1
+                  maxLength: 4000
+                  description: The trucking question to ask TruckFixHub Panta.
+      responses:
+        "200":
+          description: TruckFixHub Panta response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bridge:
+                    type: string
+                  bridge_version:
+                    type: integer
+                  request_id:
+                    type: string
+                  answer:
+                    type: string
+                  model:
+                    type: string
+                  evidence_count:
+                    type: integer
+                  retrieved_knowledge_count:
+                    type: integer
+                  retrieval_status:
+                    type: string
+        "401":
+          description: Invalid bridge credential
+        "429":
+          description: Rate limit reached
+        "502":
+          description: TruckFixHub Panta upstream request failed
+components:
+  securitySchemes:
+    PantaBridgeKey:
+      type: apiKey
+      in: header
+      name: x-panta-bridge-key
