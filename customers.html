@@ -20,4 +20,4 @@ async function loadData(){const r=await db.from('tfh_customer_lists').select('en
 async function start(){try{const r=await db.auth.getUser();user=r.data.user;if(!user){$('notice').hidden=true;$('login').hidden=false;return}await loadData()}catch(e){$('notice').textContent='Could not check your session.'}}
 $('signin').onclick=async()=>{const r=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(r.error){$('loginmsg').textContent='Sign in failed: '+r.error.message;return}user=r.data.user;await loadData()};
 start();
-</script></body></html>
+</script><script src="/truckfixhub-hospitality.js"></script></body></html>
