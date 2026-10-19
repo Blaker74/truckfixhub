@@ -1,0 +1,71 @@
+{
+  "version": "2026-10-19-expansion-8",
+  "purpose": "Curated OEM-grounded diagnostic knowledge for TruckFixHub Panta. Paraphrased from authoritative manufacturer material; always confirm exact model/year/application and current OEM procedure.",
+  "entries": [
+    {
+      "id": "detroit-dd-heavy-duty-fuel-prime-no-start",
+      "title": "Detroit DD heavy-duty crank/no-start after fuel system opened or air entry",
+      "authority": "OEM operator/service literature — Detroit",
+      "document_type": "OEM diagnostic procedure",
+      "verified": true,
+      "evidence_strength": "high",
+      "safety_sensitive": true,
+      "applicability": "Detroit DD heavy-duty platform; confirm exact engine generation/model year before applying values or procedure.",
+      "symptoms": ["crank no start", "cranks but will not start", "no start after fuel filter service", "air in fuel system"],
+      "summary": "When air has entered a Detroit DD fuel system, Detroit instructs technicians to prime the fuel system rather than relying on prolonged starter/fuel-pump operation. Older DD-platform guidance describes operating the hand primer for about three minutes or 250 strokes, then using controlled 20-second crank attempts with 60-second starter cool-down periods. If the engine still does not start after the prescribed cycles, use Detroit diagnostic software to check fault codes and repair faults before repeating the controlled start attempt. Exact priming procedure can vary by DD generation, so identify the engine and current OEM procedure first.",
+      "diagnostic_conversation": {
+        "first_question": "Was the fuel system recently opened — fuel filters changed, fuel ran low/out, or any fuel-system repair performed?",
+        "next_if_yes": "Treat air entry/prime condition as a high-value branch and follow the exact Detroit priming procedure for that engine generation.",
+        "next_if_no": "Ask for active/inactive Detroit fault codes and relevant live data before naming a component failure."
+      },
+      "source": "Detroit DD Platform operator literature DDC-SVC-MAN-0175 and current DD Heavy Duty Platform operator literature DDC-SVC-MAN-0189."
+    },
+    {
+      "id": "detroit-dd-no-ether-starting-aid",
+      "title": "Detroit DD starting aid caution",
+      "authority": "OEM operator/service literature — Detroit",
+      "document_type": "OEM safety/operation guidance",
+      "verified": true,
+      "evidence_strength": "high",
+      "safety_sensitive": true,
+      "applicability": "Detroit DD platform; confirm current OEM literature for exact engine.",
+      "summary": "Detroit DD operator guidance warns against using ether as a starting aid and warns that prolonged starter/fuel-pump operation to prime the fuel system can damage components. Panta should never recommend ether or uncontrolled extended cranking on a DD no-start.",
+      "source": "Detroit DD Platform operator literature DDC-SVC-MAN-0175."
+    },
+    {
+      "id": "eaton-ultrashift-plus-pretest-serviceranger",
+      "title": "Eaton UltraShift PLUS — start diagnosis with ServiceRanger and fault-code record",
+      "authority": "OEM troubleshooting guide — Eaton Cummins Automated Transmission Technologies",
+      "document_type": "OEM troubleshooting procedure",
+      "verified": true,
+      "evidence_strength": "high",
+      "safety_sensitive": false,
+      "applicability": "UltraShift PLUS applications covered by TRTS0940; confirm transmission model and generation.",
+      "symptoms": ["will not shift", "no gear", "transmission fault", "Eaton won't shift", "cannot communicate with TECU"],
+      "summary": "The UltraShift PLUS TRTS0940 pretest begins key-on/engine-off with ServiceRanger communication to the TECU. If communication succeeds, retrieve and record transmission fault codes, FMIs, occurrences and timestamps before proceeding. If ServiceRanger cannot communicate with the TECU, the guide routes diagnosis to the power-up sequence rather than guessing at failed components.",
+      "diagnostic_conversation": {
+        "first_question": "Can ServiceRanger communicate with the TECU, and what active/inactive fault codes and FMIs are recorded?",
+        "next_if_no_communication": "Follow the applicable UltraShift PLUS power-up/communication diagnostic path.",
+        "next_if_codes_present": "Use the exact code/FMI isolation procedure for the confirmed transmission model."
+      },
+      "source": "Eaton Cummins UltraShift PLUS Troubleshooting Guide TRTS0940."
+    },
+    {
+      "id": "eaton-shift-complaint-no-transmission-codes",
+      "title": "Eaton automated transmission shift complaint with no transmission fault codes",
+      "authority": "OEM warranty repair guideline — Eaton",
+      "document_type": "OEM diagnostic guideline",
+      "verified": true,
+      "evidence_strength": "high",
+      "safety_sensitive": false,
+      "applicability": "Applicable Eaton automated transmission complaints covered by RWRG0067; confirm product/application.",
+      "symptoms": ["shift complaint no codes", "won't shift no codes", "bad shifting no transmission codes"],
+      "summary": "Eaton RWRG0067 warns that a shift complaint without transmission fault codes may originate outside the transmission. The diagnostic path includes engine software/configuration, engine accessory loads, data-link hardware/module grounds or interfering modules, and unintended ABS/traction-control events that can override transmission shift commands. Panta should not jump directly to transmission replacement when the TECU has no supporting faults.",
+      "diagnostic_conversation": {
+        "first_question": "Are there truly no active or inactive transmission codes, and are there engine, ABS/traction-control, or data-link faults present?",
+        "next_if_no_transmission_codes": "Branch into engine configuration/software, accessory loads, data-link integrity/module grounds, and ABS/traction-control inputs before condemning transmission hardware."
+      },
+      "source": "Eaton Roadranger Warranty Repair Guideline RWRG0067."
+    }
+  ]
+}
