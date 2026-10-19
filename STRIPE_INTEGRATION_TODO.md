@@ -1,10 +1,18 @@
-# Stripe Integration TODO
+# Stripe + Panta Coins Integration
 
-## Values to Replace
+## Customer Offer
 
-No placeholder Checkout values remain in the TruckFixHub website integration. The active Supabase `create-panta-checkout` Edge Function uses the existing real Stripe Price ID and TruckFixHub return URLs.
+TruckFixHub will sell **100 Panta Coins for $5.00** as a one-time purchase. No subscription is required.
 
-## Configured Parameters
+Customer-facing language should describe Panta Coins rather than AI tokens. A normal successful paid Panta service costs **5 Panta Coins**. If Panta cannot provide meaningful help because TruckFixHub lacks sufficient verified information, the interaction should cost **0 Panta Coins**. TruckFixHub navigation, account help, and concierge assistance should remain free.
+
+Examples of paid Panta services include useful truck troubleshooting, parts assistance, repair/parts write-ups, personalized sports updates, trip/fuel assistance, and other useful Panta tasks. Free arcade entertainment, if added, must use separate free Play Points and not purchased Panta Coins.
+
+## Cost Protection
+
+The active Panta OpenAI gateway currently uses `gpt-5-mini`, rejects prompts over 8,000 characters, and caps model output at 700 tokens. TruckFixHub already has a `panta_usage_ledger` capable of recording input tokens, output tokens, provider cost, customer charge, and model. Actual provider usage should be recorded so margins can be monitored over time.
+
+## Checkout Configuration
 
 Checkout Session creation is handled server-side by the Supabase Edge Function `create-panta-checkout`.
 
@@ -20,36 +28,40 @@ Checkout Session creation is handled server-side by the Supabase Edge Function `
 
 `payment_method_collection` is intentionally omitted because this is a one-time `payment` Checkout Session.
 
-## Setup and Next Steps
-
-- `ai-assistant.html` now includes a **Buy Panta Credits** button that calls the authenticated Supabase `create-panta-checkout` Edge Function and redirects the signed-in user to Stripe-hosted Checkout.
-- Stripe secret keys remain server-side in Supabase Edge Function secrets; they are not placed in GitHub/browser code.
-- The Stripe webhook endpoint is the existing Supabase `panta-stripe-webhook` Edge Function and handles `checkout.session.completed` for Panta credits.
-- The webhook associates purchases to the signed-in TruckFixHub user through Checkout metadata and calls the existing `add_panta_credits` database RPC after Stripe reports the Checkout Session as paid.
-- Stripe Dashboard webhook destination must continue listening for `checkout.session.completed` and use the signing secret stored as `STRIPE_WEBHOOK_SECRET` in Supabase.
-- Before accepting real money, switch Stripe from Sandbox/Test to live resources and ensure the Supabase secrets and Price ID correspond to the live Stripe account/product.
-- Stripe test mode can be used with Stripe's documented test card numbers before going live.
-- Future work can display the user's current Panta-credit balance and purchase history directly in the website UI.
-
-## Flow Overview
+## Current Flow
 
 1. User signs into TruckFixHub.
-2. User taps **Buy Panta Credits** on `ai-assistant.html`.
+2. User taps the Panta purchase button on `ai-assistant.html`.
 3. TruckFixHub sends the user's Supabase access token to `create-panta-checkout`.
-4. The Edge Function creates a Stripe-hosted Checkout Session using the configured Panta-credit Price ID.
+4. The Edge Function creates a Stripe-hosted Checkout Session.
 5. Stripe collects payment.
 6. Stripe sends `checkout.session.completed` to `panta-stripe-webhook`.
-7. The webhook verifies Stripe's signature and grants credits to the corresponding TruckFixHub user.
-8. Stripe returns the customer to the Ask Panta page.
+7. The webhook verifies Stripe's signature and grants the purchase to the corresponding TruckFixHub user.
+8. Stripe returns the customer to Ask Panta.
+
+## Live Go-Live Requirements
+
+Stripe has been moved into Live mode, but the Stripe dashboard showed **Review in progress** on October 19, 2026. Do not describe live payments as fully ready until the following are complete:
+
+- Confirm Stripe account review/activation status.
+- Create or identify the **LIVE $5.00 Panta Coins Price** in Stripe. The existing hard-coded Price ID was created before Live activation and must not be assumed to be a live Price.
+- Replace the server-side Supabase `STRIPE_SECRET_KEY` with the live Stripe secret key. Never store or commit the secret key in GitHub/browser code.
+- Update `create-panta-checkout` to use the verified live $5 Price ID.
+- Create/configure the LIVE Stripe webhook destination for `checkout.session.completed` at `https://bncqcdlzmawlmfworalq.supabase.co/functions/v1/panta-stripe-webhook`.
+- Store the LIVE webhook signing secret in Supabase as `STRIPE_WEBHOOK_SECRET`. Never commit it to GitHub.
+- Change fulfillment so one successful $5 purchase grants exactly **100 Panta Coins**, rather than treating payment cents as the customer-facing coin balance.
+- Implement atomic 5-coin charging for successful paid Panta services and 0-coin charging when Panta cannot meaningfully help.
+- Expose the signed-in user's Panta Coin balance in the Panta interface.
+- Record actual OpenAI token usage/provider cost for margin monitoring.
+
+## Support
+
+TruckFixHub is setting up `support@truckfixhub.com` as the customer support address for payment, missing-coin, login, and account issues. Do not publish the address as operational until the mailbox is verified and working.
 
 ## Project Structure
 
 - `ai-assistant.html` — customer-facing Panta page and checkout launcher.
-- Supabase Edge Function `create-panta-checkout` — server-side Stripe Checkout Session creation.
-- Supabase Edge Function `panta-stripe-webhook` — signed Stripe webhook fulfillment.
-- `STRIPE_INTEGRATION_TODO.md` — single source of truth for Stripe integration status and remaining go-live work.
-
-## Resources
-
-- Stripe Support: https://support.stripe.com
-- Stripe MCP documentation: https://docs.stripe.com/mcp
+- Supabase `create-panta-checkout` — server-side Stripe Checkout Session creation.
+- Supabase `panta-stripe-webhook` — signed Stripe webhook fulfillment.
+- Supabase Panta wallet/ledger tables — customer balances, transactions, and provider usage/cost tracking.
+- `STRIPE_INTEGRATION_TODO.md` — source of truth for Panta Coins and Stripe go-live status.
