@@ -1,16 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /today.html
-Disallow: /call-notes.html
-Disallow: /customers.html
-Disallow: /appointments.html
-Disallow: /my-garage.html
-Disallow: /repair-inbox.html
-Disallow: /repair-workspace.html
-Disallow: /fix-my-truck.html
-Disallow: /ai-assistant.html
-Disallow: /panta-sign-in.html
-Disallow: /parts-list.html
-Disallow: /parts-library.html
 
 Sitemap: https://truckfixhub.com/sitemap.xml
