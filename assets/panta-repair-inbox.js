@@ -15,5 +15,16 @@
     var allowed=['/repair/semi-truck-air-system-brakes/','/repair/semi-truck-electrical-starting/','/repair/semi-truck-cooling-system/','/repair/semi-truck-transmission-driveline/','/repair/semi-truck-engine-performance/','/repair/semi-truck-aftertreatment/','/semi-truck-fault-code-guide.html','/truck-repair-catalog.html'];
     return allowed.indexOf(route)>=0?route:'/truck-repair-catalog.html';
   }
-  window.TruckFixHubPantaInbox={parse:parsePanta,safeRoute:safeRoute};
+  function esc(value){
+    return String(value||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+  }
+  function card(data){
+    if(!data)return '';
+    var route=safeRoute(data.route);
+    return '<div class="panta-summary"><b>✨ Panta:</b> '+esc(data.summary||'Complaint structured')+
+      (data.system?' <span>· '+esc(data.system)+'</span>':'')+
+      (data.missing?'<div class="small"><b>Gather next:</b> '+esc(data.missing)+'</div>':'')+
+      '<a href="'+route+'" target="_blank" rel="noopener">Open diagnostic route →</a></div>';
+  }
+  window.TruckFixHubPantaInbox={parse:parsePanta,safeRoute:safeRoute,card:card};
 })();
