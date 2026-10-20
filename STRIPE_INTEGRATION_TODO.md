@@ -2,9 +2,9 @@
 
 ## Status
 
-**Retired. Do not implement or expose this flow to TruckFixHub users.**
+**Permanently retired from the active TruckFixHub product plan. Do not implement or expose this flow to TruckFixHub users.**
 
-TruckFixHub previously explored selling Panta Coins and connecting paid AI requests to Stripe. That experiment is no longer part of the active product architecture.
+TruckFixHub previously explored selling Panta Coins and connecting paid AI requests to Stripe. That experiment is no longer part of the product architecture.
 
 The current TruckFixHub strategy is:
 
@@ -13,7 +13,7 @@ The current TruckFixHub strategy is:
 - Verified TruckFixHub content remains the technical foundation.
 - Panta must not present invented part numbers, specifications, wiring details, fault definitions or repair procedures as verified information.
 - Private AI requests require authenticated TruckFixHub account access.
-- No Panta Coins, token balance, paid AI credits or AI checkout should be advertised or sold.
+- No Panta Coins, token balance, paid AI credits, AI checkout or pay-per-question system should be advertised, sold or rebuilt.
 
 ## Historical Components
 
@@ -24,7 +24,7 @@ The Supabase project may still contain historical experimental components such a
 - older Panta wallet / usage ledger structures
 - older AI gateway experiments
 
-Their existence does **not** mean they are approved for customer use. Do not reconnect them to the public website unless the product strategy is explicitly changed and the entire payment, fulfillment, reliability, privacy and support flow is reviewed again.
+Their existence does **not** mean they are approved for customer use. They are historical infrastructure and must not be reconnected to the public website.
 
 ## Active Panta Architecture
 
@@ -40,10 +40,21 @@ The active direction is centered on `tfh-panta-v2` and the authenticated TruckFi
 
 ## Monetization Direction
 
-TruckFixHub monetization should remain separate from unreliable or unverified AI output. Current site-building priorities are architecture, useful original content, Google/SEO quality, AdSense readiness, private organizational tools and verified repair knowledge.
+**Google AdSense is the approved primary strategy for recovering TruckFixHub operating costs.**
 
-Any future paid feature must be intentionally designed and reviewed before launch. Do not infer approval from this historical file or from dormant backend functions.
+Monetization must remain separate from diagnostic conclusions and private repair organization. TruckFixHub should earn traffic by building useful original heavy-duty troubleshooting content, strong topical architecture, trustworthy public resources and a clean user experience. Advertising may support the cost of operating the site, but ads must not determine technical conclusions or interfere with safety-critical information.
+
+Current priorities are:
+
+1. Build substantial original public troubleshooting content and strong diagnostic hubs.
+2. Maintain Google-friendly crawl, sitemap, canonical and internal-link architecture.
+3. Maintain About, Standards, Privacy, Safety and Contact trust signals.
+4. Keep private organizational tools and authenticated repair records out of the public search index.
+5. Keep Panta useful as an organizer and router without charging users AI tokens or credits.
+6. Use Google AdSense, once approved and appropriate, as the primary cost-recovery channel.
 
 ## Repository Rule
 
-This file exists only to prevent the retired Stripe/Panta Coins experiment from being accidentally revived during future development. It supersedes the former Panta Coins implementation plan.
+This file exists to prevent the retired Stripe/Panta Coins experiment from being accidentally revived during future development. **No future TruckFixHub development should add AI tokens, Panta Coins, paid AI credits, AI checkout or pay-per-question monetization unless the founder explicitly reverses this rule.**
+
+For the active plan, prioritize useful content, verified repair knowledge, Google/SEO quality and AdSense readiness.
