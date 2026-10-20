@@ -10,6 +10,10 @@
 <url><loc>https://truckfixhub.com/community.html</loc><priority>0.7</priority></url>
 <url><loc>https://truckfixhub.com/privacy-policy.html</loc><priority>0.4</priority></url>
 <url><loc>https://truckfixhub.com/safety-disclaimer.html</loc><priority>0.4</priority></url>
+<url><loc>https://truckfixhub.com/truckfixhub-standards.html</loc><priority>0.5</priority></url>
+<url><loc>https://truckfixhub.com/resources.html</loc><priority>0.7</priority></url>
+<url><loc>https://truckfixhub.com/trip-fuel-cost-calculator.html</loc><priority>0.7</priority></url>
+<url><loc>https://truckfixhub.com/heavy-duty-truck-parts.html</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/class-8-ecm-cpc-tcm-communication-problems.html</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/class-8-emissions-dpf-def-derate.html</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/cummins-isx-fuel-pump-egr-coolant-problems.html</loc><priority>0.8</priority></url>
@@ -34,6 +38,7 @@
 <url><loc>https://truckfixhub.com/spn-3251-dpf-differential-pressure.html</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/spn-3226-nox-sensor.html</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/spn-3364-def-quality.html</loc><priority>0.8</priority></url>
+<url><loc>https://truckfixhub.com/spn-4364-fmi-18.html</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/repair/semi-truck-cooling-system/</loc><priority>0.9</priority></url>
 <url><loc>https://truckfixhub.com/repair/semi-truck-losing-coolant-no-visible-leak/</loc><priority>0.8</priority></url>
 <url><loc>https://truckfixhub.com/repair/semi-truck-coolant-system-building-pressure/</loc><priority>0.8</priority></url>
