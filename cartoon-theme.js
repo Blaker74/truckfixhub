@@ -1,1 +1,0 @@
-(()=>{const p=location.pathname;if(p.endsWith('/')||p.endsWith('/index.html'))return;const css=document.createElement('link');css.rel='stylesheet';css.href='/cartoon-theme.css?v=1';document.head.appendChild(css);document.documentElement.style.setProperty('--tfh-cartoon','1');})();
