@@ -111,6 +111,30 @@ Detroit manufacturer information references:
 
 Maintenance intervals vary by emissions generation, engine, application and fuel consumption. Do not treat a single published mileage as universal.
 
+### DPF: soot versus ash
+Detroit explains an important diagnostic distinction: the DPF captures both soot and ash. Soot can be oxidized during regeneration, while accumulated ash cannot be burned away and must eventually be physically removed from the filter. TruckFixHub should therefore never teach that repeated regeneration is a cure for an ash-loaded DPF.
+
+### Detroit DPF cleaning
+Detroit states its OEM DPF cleaning process uses thermal, air and liquid cleaning and reports removal of more than 95% of accumulated ash. Detroit contrasts this with air-only cleaning processes and provides a remanufactured DPF exchange option through authorized service locations.
+
+### DPF maintenance interval logic
+Detroit's current public guidance makes clear that DPF maintenance is generation-dependent and often fuel-consumption-dependent rather than simply a universal odometer number.
+- EPA10 / GHG14: Detroit says the interval is based on fuel consumption, with a maximum mileage range of about 550,000 miles; a line-haul application may commonly reach the fuel limit around 300,000–400,000 miles.
+- GHG17 / Gen 4: Detroit describes a 500,000+ mile range, with line-haul fuel limits commonly reached around 400,000–500,000 miles.
+- GHG21 / Gen 5: Detroit describes a 600,000+ mile range, with line-haul fuel limits commonly reached around 550,000–640,000 miles.
+- Detroit's published table also lists Series 60 and MBE 4000 DPF maintenance references, but exact applicability must be confirmed for the engine/emissions generation.
+
+Detroit explicitly notes that mileage intervals are subject to change. TruckFixHub must verify current Detroit literature before giving a vehicle-specific maintenance interval.
+
+### DPF diagnostic rule for TruckFixHub
+When a Detroit truck presents with repeated regen requests, regen failure, high restriction or recurring aftertreatment faults, separate these questions:
+1. Is the problem soot loading that regeneration can address?
+2. Is the DPF ash-loaded and due for physical cleaning/exchange?
+3. Is another engine/aftertreatment fault preventing successful regeneration or causing abnormal soot production?
+4. What engine and emissions generation is installed?
+
+Do not recommend replacing or cleaning a DPF from mileage alone and do not assume a regen fault means the DPF itself has failed.
+
 ## Detroit Connect / Virtual Technician
 Detroit Connect is a connected-vehicle platform. Manufacturer material describes capabilities including:
 - Vehicle/fleet health information
@@ -172,9 +196,10 @@ Detroit's StepUP program provides progressive overhaul levels for supported engi
 5. Separate EPA/emissions generations because components, controls and aftertreatment strategies change.
 6. Use Detroit service literature / DiagnosticLink procedures for exact troubleshooting and repair steps.
 7. Verify current maintenance intervals, fluids, torque values, warranty terms and part numbers before use.
+8. For DPF complaints, distinguish soot loading from non-combustible ash loading before deciding whether regeneration, diagnosis or physical cleaning is appropriate.
 
 ## TruckFixHub indexing terms
-Detroit, Detroit Diesel, Demand Detroit, Daimler Truck North America, DTNA, DD5, DD8, DD13, DD15, DD16, Gen 6, Series 50, Series 60, MBE 900, MBE 4000, DDEC, MCM, CPC, CPC2, CPC4, SAM Cab, SAM Chassis, DT12, DT12-HE, DT12-H, DT12-HL, DT12-V, DT12-VL, DT12-VX, automated manual transmission, AMT, clutch, IPM, Intelligent Powertrain Management, axle, front steer axle, tandem axle, rear axle, differential, ALM, integrated powertrain, Detroit Connect, Virtual Technician, DiagnosticLink, fault code, SPN, FMI, DOC, DPF, SCR, DEF, NOx, EGR, 1-Box, regen, regeneration, derate, turbocharger, injector, high pressure fuel, cooling, lubrication, Genuine Parts, Detroit Reman, PowerPacks, StepUP, DPF cleaning, warranty, service.
+Detroit, Detroit Diesel, Demand Detroit, Daimler Truck North America, DTNA, DD5, DD8, DD13, DD15, DD16, Gen 6, Series 50, Series 60, MBE 900, MBE 4000, DDEC, MCM, CPC, CPC2, CPC4, SAM Cab, SAM Chassis, DT12, DT12-HE, DT12-H, DT12-HL, DT12-V, DT12-VL, DT12-VX, automated manual transmission, AMT, clutch, IPM, Intelligent Powertrain Management, axle, front steer axle, tandem axle, rear axle, differential, ALM, integrated powertrain, Detroit Connect, Virtual Technician, DiagnosticLink, fault code, SPN, FMI, DOC, DPF, SCR, DEF, NOx, EGR, 1-Box, regen, regeneration, derate, soot, ash, ash loading, DPF restriction, DPF cleaning, DPF exchange, EPA10, GHG14, GHG17, GHG21, turbocharger, injector, high pressure fuel, cooling, lubrication, Genuine Parts, Detroit Reman, PowerPacks, StepUP, warranty, service.
 
 ## Primary official source sections
 - Main site: https://www.demanddetroit.com/
@@ -190,6 +215,7 @@ Detroit, Detroit Diesel, Demand Detroit, Daimler Truck North America, DTNA, DD5,
 - Parts & Service: https://www.demanddetroit.com/parts-service
 - Genuine Parts: https://www.demanddetroit.com/parts-service/detroit-genuine-parts
 - Reman Parts: https://www.demanddetroit.com/parts-service/genuine-reman-parts/
+- DPF Cleaning: https://www.demanddetroit.com/parts-service/detroit-genuine-parts-program/diesel-particulate-filter-dpf-cleaning
 - Service: https://www.demanddetroit.com/parts-service/service
 
 ## Source handling
