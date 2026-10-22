@@ -55,6 +55,27 @@ The manual states that the fourteen-digit engine model and manufacturing serial 
 
 Examples shown in the manual include DD13 12.8 L, DD15 14.8 L and DD16 15.6 L applications across Freightliner, Western Star and other applications depending on emissions generation.
 
+## Engine-identification intake logic
+TruckFixHub should identify the engine before giving Detroit-specific technical guidance whenever the answer could vary by platform or emissions generation.
+
+### Ask for these identifiers when available
+1. Engine family — DD13, DD15 or DD16.
+2. Engine serial number / complete engine model information.
+3. Vehicle model year or known emissions generation.
+4. Truck make/model and VIN when the vehicle application matters.
+5. Complete SPN/FMI or other diagnostic information when troubleshooting a fault.
+
+### Why identification matters
+Do not treat “Detroit DD engine” as one universal configuration. The manual itself illustrates different component layouts across EPA07, EPA10, GHG14 and GHG17 generations. A component location, aftertreatment arrangement, maintenance requirement or diagnostic path that is correct for one generation may not be correct for another.
+
+### Simple TruckFixHub rule
+**IDENTIFY THE ENGINE → IDENTIFY THE GENERATION → IDENTIFY THE COMPLAINT → THEN DIAGNOSE.**
+
+If the exact generation is unknown, TruckFixHub may explain the system generally but should label generation-dependent details as needing verification rather than presenting them as universal facts.
+
+### Serial-number location clue
+For the DD Platform described by this manual, the fourteen-digit engine model/manufacturing serial number is etched on a pad at the left-front area of the cylinder block. Use this as a location clue only; confirm the actual identifier before using application-specific specifications or procedures.
+
 ## Driver warning and lamp logic
 The manual dedicates separate sections to instrument-panel lamps, EPA10 DEF-level warning lamps, driver notifications/actions and the DEF post-run indicator. TruckFixHub should preserve that hierarchy instead of reducing every illuminated lamp to a generic “check engine” complaint.
 
@@ -101,7 +122,7 @@ Preserve Detroit warnings whenever knowledge from this source is converted into 
 - Follow battery, electrical, rotating-component, hot-surface, fuel-fire and aftertreatment safety precautions.
 
 ## TruckFixHub indexing terms
-Detroit, Detroit Diesel, DD Platform, DD13, DD15, DD16, DDEC, MCM, engine serial number, engine model number, Freightliner, Western Star, starting, no start, engine brake, Jake brake, cooling, coolant, fuel system, high pressure fuel pump, fuel rail, turbocharger, EGR, EGR cooler, crankcase breather, oil filter, oil coolant module, thermostat, air compressor, aftertreatment, ATS, ATD, DOC, DPF, SCR, DEF, diesel exhaust fluid, NOx, regen, regeneration, parked regen, derate, warning lamp, check engine, stop engine, DPF lamp, DEF warning, DEF post-run, driver notification, preventive maintenance, maintenance interval, specifications.
+Detroit, Detroit Diesel, DD Platform, DD13, DD15, DD16, DDEC, MCM, engine serial number, engine model number, fourteen digit engine serial number, engine identification, EPA07, EPA10, GHG14, GHG17, emissions generation, Freightliner, Western Star, VIN, starting, no start, engine brake, Jake brake, cooling, coolant, fuel system, high pressure fuel pump, fuel rail, turbocharger, EGR, EGR cooler, crankcase breather, oil filter, oil coolant module, thermostat, air compressor, aftertreatment, ATS, ATD, DOC, DPF, SCR, DEF, diesel exhaust fluid, NOx, regen, regeneration, parked regen, derate, warning lamp, check engine, stop engine, DPF lamp, DEF warning, DEF post-run, driver notification, SPN, FMI, preventive maintenance, maintenance interval, specifications.
 
 ## Source handling
 This record indexes and points to the official DTNA/Detroit publication rather than republishing the complete copyrighted manual. When building TruckFixHub content from it, paraphrase only the necessary technical information, retain safety meaning, identify Detroit as the source, and link users to the official manual when the complete manufacturer procedure is needed.
