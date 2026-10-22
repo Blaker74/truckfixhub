@@ -63,6 +63,38 @@ TruckFixHub may simplify language but must not simplify away safety. High-pressu
 ### Rule 7 — Community knowledge does not outrank manufacturer facts
 Community reports can reveal patterns and practical experience, but they should be presented as experience/clues unless independently supported. They do not override official specifications, warnings or service procedures.
 
+### Rule 8 — Never hide a source conflict
+If two credible sources disagree, TruckFixHub should not silently choose whichever answer is easiest. First check whether the sources apply to different model years, emissions generations, serial-number ranges, applications or revision dates. If the conflict cannot be resolved from available evidence, say that verification is required.
+
+**CONFLICT → CHECK APPLICATION → CHECK REVISION → CHECK GENERATION → VERIFY**
+
+### Rule 9 — Match confidence to evidence
+TruckFixHub should distinguish between what is known and what is merely plausible.
+- **Manufacturer-confirmed:** directly supported by the applicable official source.
+- **Strongly supported:** multiple reliable sources agree and no applicable manufacturer source conflicts.
+- **Diagnostic possibility:** technically plausible but still requires testing.
+- **Community pattern:** reported field experience that may help direct inspection but is not proof.
+- **Unknown / needs verification:** available sources do not support a dependable answer.
+
+Never convert “common failure” into “failed part” without evidence from the truck.
+
+### Rule 10 — Missing information is a diagnostic input
+When an exact answer depends on information the user has not supplied, ask for the smallest useful identifier rather than guessing. Examples include engine serial number, VIN, model year, emissions generation, complete SPN/FMI, transmission model, axle model, component tag or part number.
+
+The goal is not to make the user collect everything. Ask only for what materially changes the answer.
+
+## Knowledge response standard
+When TruckFixHub turns knowledge-bank material into a user-facing answer, organize it in this order whenever practical:
+1. **What it means** — plain-language explanation.
+2. **What to check first** — safest/highest-value first inspection or test.
+3. **What could cause it** — ordered possibilities, not a parts list.
+4. **What proves it** — the observation/test that separates possibilities.
+5. **What information is still needed** — only when necessary.
+6. **Safety / stop condition** — when the complaint creates a meaningful risk.
+7. **Source confidence** — manufacturer-confirmed vs diagnostic possibility when that distinction matters.
+
+Keep the front end childlike-simple while preserving the deeper technical reasoning underneath.
+
 ## Growth structure
 Add future manufacturer sources as separate Markdown records under `knowledge-bank/` and list them here. Each record should include:
 - Publisher/manufacturer
