@@ -1,0 +1,15 @@
+TruckFixHub Knowledge Bank
+Topic: Detroit DD15 top-end reassembly
+Example engine documented: D472912/DD15, ESN 472912S0829753
+
+Reassembly roadmap:
+1. Protect injector bores; clean cylinder-head upper mating surfaces, oil passages, drains and bolt holes; inspect visible valve components.
+2. Establish correct crankshaft position before camshaft installation. Do not casually rotate an engine with valvetrain disassembled.
+3. Prepare/install camshaft/rocker housing using correct sealant pattern and tightening sequence.
+4. Identify and orient camshafts; establish crank-to-cam timing and verify timing references.
+5. Install injectors and high-pressure fuel components using exact cleanliness/sealing/fastener procedure.
+6. Install rocker and engine-brake components in correct positions.
+7. Perform valve/engine-brake/injector adjustments as applicable using engine-serial/application-specific Detroit procedure.
+8. Recheck timing, connections, harness routing, fuel connections, tools/rags, binding/interference, covers, plumbing and fluids before startup.
+
+Safety/accuracy rule: TruckFixHub must not invent torque values, torque-angle sequences, timing positions, lash specifications, injector settings or engine-brake adjustments. Exact application and current manufacturer service information control.
