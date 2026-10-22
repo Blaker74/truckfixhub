@@ -55,6 +55,41 @@ The manual states that the fourteen-digit engine model and manufacturing serial 
 
 Examples shown in the manual include DD13 12.8 L, DD15 14.8 L and DD16 15.6 L applications across Freightliner, Western Star and other applications depending on emissions generation.
 
+## Driver warning and lamp logic
+The manual dedicates separate sections to instrument-panel lamps, EPA10 DEF-level warning lamps, driver notifications/actions and the DEF post-run indicator. TruckFixHub should preserve that hierarchy instead of reducing every illuminated lamp to a generic “check engine” complaint.
+
+### Simplified TruckFixHub interpretation framework
+When a DD-platform driver reports a dash lamp or derate complaint:
+1. Identify the exact lamp or message rather than relying only on the phrase “check engine light.”
+2. Determine whether the complaint concerns engine controls, aftertreatment/DPF, DEF/SCR or another vehicle system.
+3. Record whether the lamp is steady, flashing, accompanied by another lamp/message, or associated with a power/speed limitation.
+4. Capture the complete fault information with the appropriate diagnostic tool when safe to do so.
+5. Follow the manufacturer-directed driver action and diagnostic procedure for that exact condition.
+
+### Stop-engine conditions
+A red STOP ENGINE indication is a high-priority warning, not a normal “drive it and see” condition. TruckFixHub must direct the user toward safely stopping the vehicle as soon as conditions permit and following Detroit/vehicle manufacturer instructions. Do not teach continued operation simply to clear or reproduce a serious warning.
+
+### Check-engine / warning conditions
+An amber engine warning can indicate a fault that requires diagnosis even when the engine still runs. The lamp itself does not identify a failed component. Retrieve the fault information and diagnose the system rather than replacing the component named in a fault description.
+
+### DPF / regeneration indications
+A DPF or regeneration-related lamp should be interpreted together with other warning lamps, messages and operating conditions. A request for regeneration is not proof that the DPF itself has failed. Determine whether regeneration is required, whether conditions allow it, and whether another active fault is preventing successful regeneration.
+
+### DEF / SCR indications
+DEF-related warnings can escalate as a DEF level or SCR-system problem remains unresolved. TruckFixHub should distinguish low-fluid warnings from quality, dosing, sensor and SCR-system faults. Never assume adding DEF will correct every DEF/SCR warning.
+
+### DEF post-run indicator
+The manual specifically identifies a DEF post-run indicator. TruckFixHub should recognize post-shutdown aftertreatment/DEF activity as a designed system function where applicable rather than automatically labeling all activity after key-off as an electrical fault.
+
+## Fault-code teaching rule
+For Detroit DD-platform diagnostics, use this order:
+**LAMP / MESSAGE → COMPLETE FAULT → SYSTEM → TEST → PROVEN CAUSE → REPAIR**
+
+Never teach:
+**FAULT CODE → BUY THE PART NAMED IN THE CODE.**
+
+A diagnostic code reports a detected condition or circuit/system problem. Wiring, connectors, power/ground, sensors, actuators, mechanical conditions, contamination, aftertreatment state and control logic may all need to be considered before condemning a component.
+
 ## Safety anchors
 Preserve Detroit warnings whenever knowledge from this source is converted into simplified diagnostics. Important examples include:
 - Do not use or read a diagnostic tool while the vehicle is moving.
@@ -66,7 +101,7 @@ Preserve Detroit warnings whenever knowledge from this source is converted into 
 - Follow battery, electrical, rotating-component, hot-surface, fuel-fire and aftertreatment safety precautions.
 
 ## TruckFixHub indexing terms
-Detroit, Detroit Diesel, DD Platform, DD13, DD15, DD16, DDEC, MCM, engine serial number, engine model number, Freightliner, Western Star, starting, no start, engine brake, Jake brake, cooling, coolant, fuel system, high pressure fuel pump, fuel rail, turbocharger, EGR, EGR cooler, crankcase breather, oil filter, oil coolant module, thermostat, air compressor, aftertreatment, ATS, ATD, DOC, DPF, SCR, DEF, diesel exhaust fluid, NOx, regen, regeneration, parked regen, derate, warning lamp, check engine, stop engine, preventive maintenance, maintenance interval, specifications.
+Detroit, Detroit Diesel, DD Platform, DD13, DD15, DD16, DDEC, MCM, engine serial number, engine model number, Freightliner, Western Star, starting, no start, engine brake, Jake brake, cooling, coolant, fuel system, high pressure fuel pump, fuel rail, turbocharger, EGR, EGR cooler, crankcase breather, oil filter, oil coolant module, thermostat, air compressor, aftertreatment, ATS, ATD, DOC, DPF, SCR, DEF, diesel exhaust fluid, NOx, regen, regeneration, parked regen, derate, warning lamp, check engine, stop engine, DPF lamp, DEF warning, DEF post-run, driver notification, preventive maintenance, maintenance interval, specifications.
 
 ## Source handling
 This record indexes and points to the official DTNA/Detroit publication rather than republishing the complete copyrighted manual. When building TruckFixHub content from it, paraphrase only the necessary technical information, retain safety meaning, identify Detroit as the source, and link users to the official manual when the complete manufacturer procedure is needed.
