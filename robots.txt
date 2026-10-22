@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
+
+# Private account and user data tools
 Disallow: /account.html
+Disallow: /dashboard.html
 Disallow: /vins.html
 Disallow: /parts.html
 Disallow: /calls.html
