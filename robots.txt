@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /account.html
+Disallow: /vins.html
+Disallow: /parts.html
+Disallow: /calls.html
+Disallow: /calendar.html
+Disallow: /warranty.html
+
+Sitemap: https://truckfixhub.com/sitemap.xml
