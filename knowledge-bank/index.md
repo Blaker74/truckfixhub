@@ -109,6 +109,105 @@ After repair, confirm the original complaint is corrected under appropriate cond
 
 **COMPLAINT → IDENTITY → BASIC CHECK → DATA → DIRECTED TEST → PROVEN CAUSE → VERIFY REPAIR**
 
+## Symptom-to-system routing
+TruckFixHub should begin with the driver's complaint whenever possible, then route toward systems instead of asking a user to already know which component is bad.
+
+### Won't crank
+Start with:
+- Battery state / voltage and connections
+- Main power and grounds
+- Starter / solenoid command path
+- Ignition/start-enable path
+- Neutral / clutch / interlock conditions where applicable
+- Vehicle/engine control power and communication if the basic starting circuit is intact
+
+Do not begin by blaming the starter simply because the engine does not crank.
+
+### Cranks but won't start
+Separate this from “won't crank.” Start with:
+- Engine speed / crank signal recognition
+- Fuel supply and fuel-pressure requirements
+- Engine-control power / communication
+- Required enable conditions
+- Active faults and relevant manufacturer-directed checks
+
+### Low power
+Route across systems rather than treating “low boost” as the only possibility:
+- Active derate / engine protection / aftertreatment status
+- Air intake and charge-air restriction/leaks
+- Fuel supply / pressure / restriction
+- Turbo / boost control
+- Exhaust / aftertreatment restriction
+- Sensor plausibility / commanded-versus-actual data
+- Mechanical engine condition when evidence points there
+
+### Overheating
+Start with safe cooling-system basics:
+- Coolant level only when safe to inspect
+- External leaks
+- Fan operation / command
+- Belt / drive condition where applicable
+- Radiator / charge-air-cooler airflow restriction
+- Thermostat / circulation / water-pump concerns when supported
+- Combustion-gas or internal-engine causes only after simpler evidence is considered
+
+Never instruct removal of a hot pressurized cooling-system cap.
+
+### Losing air / air leak
+Route by whether the complaint is supply, leakage or application related:
+- Compressor / build rate
+- Governor / unloading behavior
+- Reservoirs / drains / check valves
+- Audible/external leaks
+- Brake valves / chambers / hoses
+- Air suspension / accessories
+- Pressure-protection behavior
+
+Brake-air complaints are safety-critical; TruckFixHub should distinguish “find the leak” education from permission to operate an unsafe vehicle.
+
+### Vibration
+First separate when it occurs:
+- Engine speed related while stationary
+- Vehicle-speed related
+- Acceleration / torque related
+- Deceleration related
+- Braking related
+
+Then route toward engine/accessories, wheels/tires, driveline/U-joints, driveshaft, transmission, axle/differential, suspension or brakes based on that pattern. Do not begin by replacing driveline parts without identifying when the vibration occurs.
+
+### Won't shift / shifting problem
+Start with:
+- Exact transmission type/model
+- Active transmission/engine faults
+- Air supply where applicable
+- Clutch actuation / clutch condition where applicable
+- Power/ground / communication
+- Shift-control inputs and enable conditions
+- Mechanical transmission concerns only when evidence supports them
+
+For integrated automated transmissions, consider engine torque/protection information shared across the powertrain.
+
+### Warning light / fault code
+Route:
+**EXACT LAMP/MESSAGE → COMPLETE CODE → SYSTEM → BASIC CHECK → DIRECTED TEST**
+
+Never route directly from a code description to a replacement part.
+
+### Regen / DPF complaint
+Route:
+- Engine/emissions generation
+- All active faults
+- Soot versus ash
+- Regen enable conditions
+- Temperature generation / dosing / sensor evidence
+- Abnormal soot-production causes
+- Scheduled physical DPF service where applicable
+
+Repeated regen is not a substitute for diagnosis.
+
+### Smoke
+First identify smoke appearance and operating condition, but avoid claiming color alone proves a specific failed part. Route toward fuel/combustion, air supply/boost, oil consumption, coolant intrusion, aftertreatment or mechanical engine condition based on supporting evidence.
+
 ## Parts-cannon prevention
 Before recommending replacement of an expensive component, TruckFixHub should be able to answer:
 - What evidence points to this component?
