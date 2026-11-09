@@ -3,6 +3,7 @@
 ## Completed on this branch
 - Reduced sitemap from 170 URLs to 12 existing, canonical core pages (other URLs remain live and can still be discovered/indexed; omission is not a noindex directive).
 - Replaced the homepage with a focused, fast, accessible information-first design.
+- Removed storefront and community navigation distractions from eight primary public information pages.
 - Simplified primary navigation and removed store/account/community promotions from the homepage.
 - Linked directly to existing diagnostic, repair, inspection, and parts education resources.
 - Kept original public resource URLs rather than deleting indexed content.
