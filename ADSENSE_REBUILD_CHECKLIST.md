@@ -1,6 +1,7 @@
 # TruckFixHub AdSense-first rebuild
 
 ## Completed on this branch
+- Reduced sitemap from 170 URLs to 12 existing, canonical core pages (other URLs remain live and can still be discovered/indexed; omission is not a noindex directive).
 - Replaced the homepage with a focused, fast, accessible information-first design.
 - Simplified primary navigation and removed store/account/community promotions from the homepage.
 - Linked directly to existing diagnostic, repair, inspection, and parts education resources.
