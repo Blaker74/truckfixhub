@@ -29,3 +29,7 @@ The current implementation uses no advertising script, so it does not depend on 
 - https://support.google.com/adsense/answer/12171612
 
 Google specifies original useful content, functional navigation, policy compliance, public access and accurate privacy disclosures. There is no universal official article-count, word-count or traffic threshold in the eligibility/readiness guidance. Consolidation used editorial judgment; the 400-word cutoff is not a Google rule. Search Console exclusions for a proper alternate canonical or redirect are not inherently an AdSense rejection.
+
+## November 10, 2026 — publisher code installation
+
+At the operator’s request, installed the supplied asynchronous AdSense loader in the head of current indexable sitemap pages. Redirects and legacy pages remain excluded. Updated privacy disclosures to reflect installation. Google account consent settings, ad serving eligibility, and approval remain unverified. The prior no-script implementation notes above describe the November 9 state.
